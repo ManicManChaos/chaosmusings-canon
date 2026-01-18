@@ -9,17 +9,23 @@ function CallbackInner() {
   const router = useRouter();
 
   useEffect(() => {
-    const exchangeCode = async () => {
+    const run = async () => {
+      // Supabase OAuth returns either `code` (PKCE) or sometimes tokens depending on flow.
       const code = searchParams.get("code");
-      if (!code) return;
 
-      const { error } = await supabase.auth.exchangeCodeForSession(code);
-
-      // Regardless of success or failure, return to app shell
-      router.replace("/");
+      try {
+        if (code) {
+          await supabase.auth.exchangeCodeForSession(code);
+        } else {
+          // If there is no code, we still bounce home (prevents dead-end screens)
+          // Session may already be established via cookies.
+        }
+      } finally {
+        router.replace("/");
+      }
     };
 
-    exchangeCode();
+    run();
   }, [searchParams, router]);
 
   return null;
