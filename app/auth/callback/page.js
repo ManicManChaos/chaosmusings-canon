@@ -1,58 +1,34 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { supabase } from "../../../lib/supabaseClient";
+import { Suspense, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabaseClient";
 
-export default function AuthCallbackPage() {
+function CallbackInner() {
+  const searchParams = useSearchParams();
   const router = useRouter();
-  const params = useSearchParams();
-  const [msg, setMsg] = useState("FINALIZING…");
 
   useEffect(() => {
-    let alive = true;
+    const exchangeCode = async () => {
+      const code = searchParams.get("code");
+      if (!code) return;
 
-    const run = async () => {
-      try {
-        const code = params.get("code");
-        const error = params.get("error");
-        const errorDesc = params.get("error_description");
+      const { error } = await supabase.auth.exchangeCodeForSession(code);
 
-        if (error) {
-          throw new Error(errorDesc || error);
-        }
-
-        if (!code) {
-          throw new Error("Missing OAuth code.");
-        }
-
-        // Supabase PKCE exchange (client-side)
-        const { error: exErr } = await supabase.auth.exchangeCodeForSession(code);
-        if (exErr) throw exErr;
-
-        if (!alive) return;
-
-        setMsg("WELCOME BACK…");
-        // Return to your canon landing (adjust if you want a different hash)
-        router.replace("/#today");
-      } catch (e) {
-        console.error("[auth/callback]", e);
-        if (!alive) return;
-        setMsg("AUTH FAILED. RETURNING…");
-        setTimeout(() => router.replace("/"), 900);
-      }
+      // Regardless of success or failure, return to app shell
+      router.replace("/");
     };
 
-    run();
-    return () => {
-      alive = false;
-    };
-  }, [params, router]);
+    exchangeCode();
+  }, [searchParams, router]);
 
-  // Keep it minimal; your OpeningBook handles visuals.
+  return null;
+}
+
+export default function CallbackPage() {
   return (
-    <div style={{ padding: 18, fontFamily: "system-ui" }}>
-      <div style={{ opacity: 0.8 }}>{msg}</div>
-    </div>
+    <Suspense fallback={null}>
+      <CallbackInner />
+    </Suspense>
   );
 }
