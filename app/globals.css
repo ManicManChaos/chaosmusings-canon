@@ -1,49 +1,241 @@
-/* ========== GATE (intro) ========== */
-.gateWrap{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  min-height: 100svh; /* critical for iPad Safari centering */
-  padding:28px 18px;
+/* =========================================================
+   MANIC MUSINGS OF CHAOS — GLOBAL STYLES (CANON LOCK)
+   Platform: iPad-first
+   Palette: Green / Black base, Nude Pink primary text,
+            Gold / Khaki accents only
+   ========================================================= */
+
+/* ---------- CSS RESET ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-.gateCard{
-  width:min(980px, 96vw);
-  margin: 0 auto; /* hard center even if layout shifts */
-  border-radius: var(--r2);
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #0b120e; /* deep green-black */
+  color: #e8b9ad; /* nude pink primary text */
+  font-family: -apple-system, BlinkMacSystemFont, "Inter",
+               "Helvetica Neue", Arial, sans-serif;
+  height: 100%;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+
+/* ---------- ROOT TOKENS ---------- */
+:root {
+  --bg-main: #0b120e;
+  --bg-panel: rgba(10, 16, 13, 0.78);
+
+  --text-main: #e8b9ad;   /* nude pink */
+  --text-soft: #caa59b;   /* muted nude */
+  --text-dim:  #8e746c;
+
+  --gold: #bfa46a;
+  --khaki: #7f7a5a;
+
+  --line: rgba(191, 164, 106, 0.28);
+
+  --r1: 10px;
+  --r2: 16px;
+
+  --shadow:
+    0 10px 30px rgba(0,0,0,0.45),
+    inset 0 0 0 1px rgba(191,164,106,0.12);
+}
+
+/* ---------- APP SHELL ---------- */
+.appRoot {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: row;
+  background: var(--bg-main);
+}
+
+/* ---------- HEADER STRIP ---------- */
+.appHeader {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(
+    180deg,
+    rgba(5,8,6,.92),
+    rgba(5,8,6,.75)
+  );
+}
+
+.appHeaderTitle {
+  letter-spacing: .28em;
+  font-size: 12px;
+  color: var(--text-main);
+}
+
+/* ---------- GATE / OPENING ---------- */
+.gateWrap {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.gateCard {
+  width: min(960px, 96vw);
+  background: var(--bg-panel);
   border: 1px solid var(--line);
-  background: rgba(8,12,10,.60);
+  border-radius: var(--r2);
   box-shadow: var(--shadow);
-  overflow:hidden;
+  overflow: hidden;
 }
 
-.gateStage{
-  position:relative;
-  height:min(58vh, 520px);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background: linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.35));
+.gateStage {
+  position: relative;
+  height: min(58vh, 520px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.sigilBtn{
-  position:absolute;
-  border:1px solid var(--line);
-  background: rgba(0,0,0,.22);
-  color: var(--nude);
-  border-radius: 999px;
-  padding:10px 14px;
-  display:flex;
-  gap:10px;
-  align-items:center;
-  cursor:pointer;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+.gateImg {
+  position: absolute;
+  inset: 0;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity .5s ease;
 }
 
-/* NEW: centered button placement (waistline feel) */
-.sigilBtnCenter{
-  left:50%;
-  bottom:18px;
+.gateImg.isOn {
+  opacity: 1;
+}
+
+.gateFade {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at center,
+    rgba(0,0,0,0) 40%,
+    rgba(0,0,0,.65) 100%
+  );
+}
+
+.sigilBtn {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
   transform: translateX(-50%);
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(0,0,0,.25);
+  color: var(--text-main);
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  backdrop-filter: blur(12px);
+  cursor: pointer;
+}
+
+.sigilBtn:disabled {
+  opacity: .6;
+  cursor: default;
+}
+
+.gateTitlePlate {
+  padding: 18px;
+  text-align: center;
+  border-top: 1px solid var(--line);
+}
+
+.gateTitle {
+  letter-spacing: .34em;
+  font-size: 13px;
+  color: var(--text-main);
+}
+
+/* ---------- SIDEBAR (RIGHT EDGE ONLY) ---------- */
+.rightRail {
+  width: 64px;
+  border-left: 1px solid var(--line);
+  background: rgba(8,12,10,.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 0;
+  gap: 10px;
+}
+
+.railBtn {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(0,0,0,.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.railBtn.isActive {
+  border-color: var(--gold);
+}
+
+.railIcon {
+  width: 22px;
+  height: 22px;
+  opacity: .85;
+}
+
+/* ---------- MAIN STAGE ---------- */
+.mainStage {
+  flex: 1;
+  padding: 24px;
+}
+
+/* ---------- ASSESSMENT ---------- */
+.card {
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  border-radius: var(--r2);
+  padding: 18px;
+  margin-bottom: 18px;
+}
+
+.cardHead {
+  font-size: 13px;
+  letter-spacing: .22em;
+  color: var(--gold);
+  margin-bottom: 14px;
+}
+
+.inp,
+select {
+  width: 100%;
+  background: rgba(0,0,0,.25);
+  border: 1px solid var(--line);
+  border-radius: var(--r1);
+  padding: 12px 14px;
+  color: var(--text-main);
+}
+
+select option {
+  background: #0b120e;
+  color: var(--text-main);
+}
+
+/* ---------- UTIL ---------- */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
 }
