@@ -15,7 +15,6 @@ export default function AuthGate() {
     const init = async () => {
       const { data } = await supabase.auth.getSession();
       if (!mounted) return;
-
       setSession(data?.session ?? null);
       setReady(true);
     };
@@ -34,12 +33,12 @@ export default function AuthGate() {
     };
   }, []);
 
-  // Prevent the “corner layout” flash while auth resolves
+  // prevents the “corner flash” while auth resolves
   if (!ready) return null;
 
-  // Not logged in → show your opening gate
+  // not logged in → show opening gate
   if (!session) return <OpeningBook />;
 
-  // Logged in → show the real app
+  // logged in → show app
   return <AppShell />;
 }
