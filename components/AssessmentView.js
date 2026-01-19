@@ -1,269 +1,200 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
+import { ICONS } from "@/lib/assets";
 
-const STORAGE_KEY = "mmoc_entries_v4";
-
-const nowISODate = () => {
+const toParts = () => {
   const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
-};
-
-const formatChipDate = (d) =>
-  d
+  const day = d.toLocaleDateString(undefined, { weekday: "long" }).toUpperCase();
+  const date = d
     .toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })
     .toUpperCase();
-
-const formatChipDay = (d) => d.toLocaleDateString(undefined, { weekday: "long" }).toUpperCase();
-
-const readEntries = () => {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    const arr = raw ? JSON.parse(raw) : [];
-    return Array.isArray(arr) ? arr : [];
-  } catch {
-    return [];
-  }
+  const time = d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" }).toUpperCase();
+  return { day, date, time };
 };
 
-const writeEntries = (arr) => localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+// CANON dropdown sets (FULL)
+const MOODS = [
+  "Select…",
+  "Horny for Peace",
+  "Feral & Focused",
+  "Violently Calm",
+  "Sexually Frustrated but Contained",
+  "Plotting With a Semi",
+  "Muscle Memory and Trauma",
+  "Built Like a Threat",
+  "Calm Like a Loaded Weapon",
+  "Hard Body, Closed Heart",
+  "Wanting Touch, Refusing Attachment",
+  "Desire Without Permission",
+  "Attracted but Unavailable",
+  "Crushing Quietly",
+  "Sexually Awake, Emotionally Armed",
+  "Detached for My Own Safety",
+  "Heart Locked, Body Open",
+  "Missing Someone I Shouldn’t",
+  "Grief With Good Posture",
+  "Sad, Not Weak",
+  "Petty but Correct",
+  "Annoyed by Everyone",
+  "Do Not Test Me",
+  "Observing Before Engaging",
+  "Silence Is Strategic",
+  "Hyperfocused and Unreachable",
+  "Overstimulated but Managing",
+  "Brain on Fire",
+  "Mask On, Emotions Offline",
+  "Unmasked and Exposed",
+  "Indifferent and Relieved",
+  "Regulated Enough",
+  "Resting in My Body",
+  "Safe for Now",
+  "Still Standing"
+];
 
-const upsertEntry = (entry) => {
-  const entries = readEntries();
-  const ix = entries.findIndex((e) => e && e.date === entry.date);
-  if (ix >= 0) entries[ix] = entry;
-  else entries.unshift(entry);
-  entries.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
-  writeEntries(entries);
-};
+const ERAS = [
+  "(optional)",
+  "Villain Era",
+  "Whore4More",
+  "Horny for Peace",
+  "Muscle Memory and Trauma",
+  "Plotting Season",
+  "Built, Not Broken",
+  "Hard Body, Harder Boundaries",
+  "Flesh and Willpower",
+  "Dangerous Crush Season",
+  "Attachment Without Illusions",
+  "Wanting Without Chasing",
+  "Letting Someone Matter (Carefully)",
+  "Post-Heartbreak Control Phase",
+  "Emotional Scar Tissue",
+  "Grief Without Collapse",
+  "Detachment Training",
+  "Gym God Ascension",
+  "Strength Without Apology",
+  "Discipline Over Desire",
+  "Power Stabilization",
+  "Hyperfocus Arc",
+  "Manic Clarity Window",
+  "Burnout Containment",
+  "Re-Regulation Protocol",
+  "Silence as Strategy",
+  "No Negotiation Period",
+  "Energy Preservation Mode",
+  "Nothing to Prove",
+  "Knowing Exactly Who I Am"
+];
 
-export default function AssessmentView() {
-  const [day, setDay] = useState("");
-  const [dateLabel, setDateLabel] = useState("");
+const SINGLES = [
+  "Select…",
+  "Single and Self-Controlled",
+  "Single, Not Looking",
+  "Single but Curious",
+  "Crushing Quietly",
+  "Mutual Tension, No Labels",
+  "Attracted but Guarded",
+  "Emotionally Involved",
+  "Physically Attached, Emotionally Cautious",
+  "Letting Someone In (Slowly)",
+  "Complicated on Purpose",
+  "Unavailable by Design",
+  "Attached Against My Will",
+  "Heart Closed for Maintenance",
+  "Recovering From Someone",
+  "Detaching With Intent",
+  "Indifferent and Relieved",
+  "Choosing Myself"
+];
 
-  const moods = useMemo(
-    () => [
-      "Select…",
-      "Horny for Peace",
-      "Feral & Focused",
-      "Violently Calm",
-      "Sexually Frustrated but Contained",
-      "Plotting With a Semi",
-      "Muscle Memory and Trauma",
-      "Built Like a Threat",
-      "Calm Like a Loaded Weapon",
-      "Hard Body, Closed Heart",
-      "Wanting Touch, Refusing Attachment",
-      "Desire Without Permission",
-      "Attracted but Unavailable",
-      "Crushing Quietly",
-      "Sexually Awake, Emotionally Armed",
-      "Detached for My Own Safety",
-      "Heart Locked, Body Open",
-      "Missing Someone I Shouldn’t",
-      "Grief With Good Posture",
-      "Sad, Not Weak",
-      "Petty but Correct",
-      "Annoyed by Everyone",
-      "Do Not Test Me",
-      "Observing Before Engaging",
-      "Silence Is Strategic",
-      "Hyperfocused and Unreachable",
-      "Overstimulated but Managing",
-      "Brain on Fire",
-      "Mask On, Emotions Offline",
-      "Unmasked and Exposed",
-      "Indifferent and Relieved",
-      "Regulated Enough",
-      "Resting in My Body",
-      "Safe for Now",
-      "Still Standing",
-    ],
-    []
-  );
-
-  const eras = useMemo(
-    () => [
-      "(optional)",
-      "Villain Era",
-      "Whore4More",
-      "Horny for Peace",
-      "Muscle Memory and Trauma",
-      "Plotting Season",
-      "Built, Not Broken",
-      "Hard Body, Harder Boundaries",
-      "Flesh and Willpower",
-      "Dangerous Crush Season",
-      "Attachment Without Illusions",
-      "Wanting Without Chasing",
-      "Letting Someone Matter (Carefully)",
-      "Post-Heartbreak Control Phase",
-      "Emotional Scar Tissue",
-      "Grief Without Collapse",
-      "Detachment Training",
-      "Gym God Ascension",
-      "Strength Without Apology",
-      "Discipline Over Desire",
-      "Power Stabilization",
-      "Hyperfocus Arc",
-      "Manic Clarity Window",
-      "Burnout Containment",
-      "Re-Regulation Protocol",
-      "Silence as Strategy",
-      "No Negotiation Period",
-      "Energy Preservation Mode",
-      "Nothing to Prove",
-      "Knowing Exactly Who I Am",
-    ],
-    []
-  );
-
-  const singles = useMemo(
-    () => [
-      "Select…",
-      "Single and Self-Controlled",
-      "Single, Not Looking",
-      "Single but Curious",
-      "Crushing Quietly",
-      "Mutual Tension, No Labels",
-      "Attracted but Guarded",
-      "Emotionally Involved",
-      "Physically Attached, Emotionally Cautious",
-      "Letting Someone In (Slowly)",
-      "Complicated on Purpose",
-      "Unavailable by Design",
-      "Attached Against My Will",
-      "Heart Closed for Maintenance",
-      "Recovering From Someone",
-      "Detaching With Intent",
-      "Indifferent and Relieved",
-      "Choosing Myself",
-    ],
-    []
-  );
-
-  const [form, setForm] = useState({
-    title: "",
-    location: "",
-    intent: "",
-    mood: "",
-    word: "",
-    era: "",
-    single: "",
+const renderOptions = (arr, firstValueEmpty = true) =>
+  arr.map((t, i) => {
+    const v = i === 0 && firstValueEmpty ? "" : t;
+    return (
+      <option key={`${t}-${i}`} value={v}>
+        {String(t).toUpperCase()}
+      </option>
+    );
   });
 
-  // init chips + load today
-  useEffect(() => {
-    const d = new Date();
-    setDay(formatChipDay(d));
-    setDateLabel(formatChipDate(d));
+export default function AssessmentView() {
+  const [chip, setChip] = useState(() => toParts());
 
-    const date = nowISODate();
-    const e = readEntries().find((x) => x && x.date === date);
-    if (e?.data) setForm((prev) => ({ ...prev, ...e.data }));
+  useEffect(() => {
+    const t = setInterval(() => setChip(toParts()), 30_000);
+    return () => clearInterval(t);
   }, []);
 
-  // autosave
-  useEffect(() => {
-    const t = setTimeout(() => {
-      const date = nowISODate();
-      upsertEntry({
-        date,
-        updatedAt: Date.now(),
-        data: { ...form },
-      });
-    }, 320);
-    return () => clearTimeout(t);
-  }, [form]);
-
-  const set = (k) => (e) => setForm((p) => ({ ...p, [k]: e.target.value }));
-
   return (
-    <>
-      {/* TOP BAR (canon): Eye + TELL NO LIES left, Date right */}
-      <div className="topbar">
-        <div className="brandPlate">
-          <div className="brandRow">
-            <img className="eyeMark" src="/glyphs/ornate/sigil-eye.png" alt="" aria-hidden="true" />
-            <div className="brandTitle">TELL NO LIES</div>
+    <div className="view">
+      <header className="tnlHeader" aria-label="Tell No Lies Header">
+        <div className="tnlLeft" aria-hidden="true">
+          <img className="tnlEye" src={ICONS.eye} alt="" />
+        </div>
+
+        <div className="tnlTitle">TELL NO LIES</div>
+
+        <div className="tnlChips" aria-label="Date and Time">
+          <div className="chip">{chip.day}</div>
+          <div className="chip">{chip.date}</div>
+          <div className="chip">{chip.time}</div>
+        </div>
+      </header>
+
+      <section className="card assessmentCard">
+        <div className="assessHead">
+          <div className="assessTitle">THE ASSESSMENT</div>
+          <div className="assessTools" aria-hidden="true">
+            <div className="toolDot" />
+            <div className="toolDot" />
+            <div className="toolDot" />
+            <div className="toolDot" />
           </div>
         </div>
 
-        <div className="dateChips">
-          <div className="chip">{day}</div>
-          <div className="chip">{dateLabel}</div>
-        </div>
-      </div>
-
-      <div className="container">
-        <section className="card view">
-          <div className="pageHeader">
-            <div className="pageTitle">THE ASSESSMENT</div>
-          </div>
-
+        <div className="assessBody">
           <div className="titleRow">
-            <input
-              className="titleInput"
-              value={form.title}
-              onChange={set("title")}
-              placeholder="TITLE OF THE DAY"
-            />
+            <input className="titleInput" name="entryTitle" placeholder="" autoComplete="off" />
           </div>
 
           <div className="grid2">
             <div className="field">
               <label>LOCATION</label>
-              <input value={form.location} onChange={set("location")} placeholder="Where are you?" />
+              <input className="inp" name="entryLocation" placeholder="" autoComplete="off" />
             </div>
 
             <div className="field">
-              <label>INTENT</label>
-              <input value={form.intent} onChange={set("intent")} placeholder="What are you here to do?" />
+              <label>HEAD HUMMER</label>
+              <input className="inp" name="entryIntent" placeholder="" autoComplete="off" />
             </div>
 
             <div className="field">
               <label>MOOD</label>
-              <select value={form.mood} onChange={set("mood")}>
-                {moods.map((m, i) => (
-                  <option key={i} value={i === 0 ? "" : m}>
-                    {m.toUpperCase()}
-                  </option>
-                ))}
+              <select className="inp" name="entryMood" defaultValue="">
+                {renderOptions(MOODS, true)}
               </select>
             </div>
 
             <div className="field">
-              <label>WORD</label>
-              <input value={form.word} onChange={set("word")} placeholder="One word to anchor today" />
+              <label>WORD OF THE DAY</label>
+              <input className="inp" name="entryWord" placeholder="" autoComplete="off" />
             </div>
 
             <div className="field">
               <label>ERA</label>
-              <select value={form.era} onChange={set("era")}>
-                {eras.map((x, i) => (
-                  <option key={i} value={i === 0 ? "" : x}>
-                    {x.toUpperCase()}
-                  </option>
-                ))}
+              <select className="inp" name="entryEra" defaultValue="">
+                {renderOptions(ERAS, true)}
               </select>
             </div>
 
             <div className="field">
               <label>SINGLENESS LEVEL</label>
-              <select value={form.single} onChange={set("single")}>
-                {singles.map((s, i) => (
-                  <option key={i} value={i === 0 ? "" : s}>
-                    {s.toUpperCase()}
-                  </option>
-                ))}
+              <select className="inp" name="entrySingle" defaultValue="">
+                {renderOptions(SINGLES, true)}
               </select>
             </div>
           </div>
-        </section>
-      </div>
-    </>
+        </div>
+      </section>
+    </div>
   );
 }
