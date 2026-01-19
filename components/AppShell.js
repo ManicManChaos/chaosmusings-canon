@@ -1,39 +1,47 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import OpeningBook from "./OpeningBook";
-import AssessmentView from "./AssessmentView";
-import { supabase } from "../lib/supabaseClient";
+import { useMemo, useState } from "react";
+import Sidebar from "@/components/Sidebar";
+import Weave from "@/components/Weave";
 
 export default function AppShell() {
-  const [ready, setReady] = useState(false);
+  const [active, setActive] = useState("eye");
+  const [weaving, setWeaving] = useState(false);
 
-  // If already logged in, skip gate.
-  useEffect(() => {
-    let alive = true;
+  const nav = useMemo(
+    () => (id) => {
+      setWeaving(true);
+      setTimeout(() => {
+        setActive(id);
+        setWeaving(false);
+      }, 520);
+    },
+    []
+  );
 
-    const check = async () => {
-      const { data } = await supabase.auth.getSession();
-      if (!alive) return;
-      setReady(!!data?.session);
-    };
+  return (
+    <div className="appRoot">
+      <Sidebar active={active} onSelect={nav} />
 
-    check();
+      <main className="mainStage">
+        {/* IMPORTANT: do not invent headers here.
+            Your canonical top bar should live where it already lives. */}
 
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!alive) return;
-      setReady(!!session);
-    });
+        {active === "eye" ? (
+          <section className="card">
+            <div className="cardHead">THE ASSESSMENT</div>
+            {/* if you already have AssessmentView, swap this div for it */}
+            <div className="small">Assessment UI renders here.</div>
+          </section>
+        ) : (
+          <section className="card">
+            <div className="cardHead">{String(active).toUpperCase()}</div>
+            <div className="small">Section placeholder.</div>
+          </section>
+        )}
+      </main>
 
-    return () => {
-      alive = false;
-      sub?.subscription?.unsubscribe?.();
-    };
-  }, []);
-
-  // Not authenticated: show OpeningBook (sigil triggers OAuth)
-  if (!ready) return <OpeningBook />;
-
-  // Authenticated: show the canon Assessment (Daily Hub text is NOT used)
-  return <AssessmentView />;
+      {weaving ? <Weave /> : null}
+    </div>
+  );
 }
