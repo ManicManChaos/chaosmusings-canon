@@ -1,37 +1,34 @@
 "use client";
 
 import styles from "./Sidebar.module.css";
-import { ICONS } from "../lib/assets";
 
-const ITEMS = [
-  { id: "eye", label: "TODAY", icon: ICONS.eye },
-  { id: "moments", label: "MOMENTS", icon: ICONS.moments },
-  { id: "roid", label: "ROID BOY", icon: ICONS.roid },
-  { id: "summation", label: "SUMMATION", icon: ICONS.summation },
-  { id: "library", label: "LIBRARY", icon: ICONS.library },
-  { id: "year", label: "YEAR REVIEW", icon: ICONS.year },
-];
-
-export default function Sidebar({ active, onSelect }) {
+export default function Sidebar({ open, onClose, routes, active, onSelect }) {
   return (
-    <aside className={styles.rightRail} aria-label="Navigation">
-      {ITEMS.map((it) => (
-        <button
-          key={it.id}
-          type="button"
-          className={`${styles.railBtn} ${active === it.id ? styles.isActive : ""}`}
-          onClick={() => onSelect?.(it.id)}
-          aria-label={it.label}
-        >
-          <img
-            className={styles.railIcon}
-            src={it.icon}
-            alt=""
-            draggable="false"
-          />
-          <span className={styles.srOnly}>{it.label}</span>
-        </button>
-      ))}
-    </aside>
+    <>
+      {/* Scrim */}
+      <div
+        className={`${styles.scrim} ${open ? styles.isOn : ""}`}
+        onClick={onClose}
+        aria-hidden={!open}
+      />
+
+      {/* Drawer */}
+      <aside className={`${styles.drawer} ${open ? styles.isOn : ""}`} aria-label="Navigation">
+        <div className={styles.inner}>
+          {routes.map((r) => (
+            <button
+              key={r.id}
+              type="button"
+              className={`${styles.item} ${active === r.id ? styles.active : ""}`}
+              onClick={() => onSelect?.(r.id)}
+              aria-label={r.label}
+            >
+              <img className={styles.icon} src={r.icon} alt="" draggable="false" />
+              <span className={styles.label}>{r.label}</span>
+            </button>
+          ))}
+        </div>
+      </aside>
+    </>
   );
 }
