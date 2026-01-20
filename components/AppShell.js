@@ -3,95 +3,121 @@
 import { useEffect, useMemo, useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import Weave from "@/components/Weave";
-import AssessmentView from "@/components/AssessmentView";
 
-// Stub views (safe placeholders until you paste your approved ones)
-// These do NOT change your approved content; they just prevent crashes.
-function IntakeView() { return <div style={{ padding: 18 }}>INTAKE (wired next)</div>; }
-function RoidBoyView() { return <div style={{ padding: 18 }}>ROID BOY (wired next)</div>; }
-function MomentsView() { return <div style={{ padding: 18 }}>MOMENTS (wired next)</div>; }
-function PSView() { return <div style={{ padding: 18 }}>P.S. (wired next)</div>; }
-function SummationView() { return <div style={{ padding: 18 }}>SUMMATION (wired next)</div>; }
-function LibraryView() { return <div style={{ padding: 18 }}>LIBRARY (wired next)</div>; }
-function SealView() { return <div style={{ padding: 18 }}>SEAL (wired next)</div>; }
-function YearReviewView() { return <div style={{ padding: 18 }}>YEAR REVIEW (wired next)</div>; }
+// If you already have these files, keep the imports and remove the inline stubs.
+// If you do NOT have them yet, leave the inline stubs for now (they won’t invent helper text).
+// Later we will replace each stub with your fully approved view files.
+function IntakeView() {
+  return (
+    <main className="mainStage">
+      <div className="viewPad">
+        <div className="viewTitle">INTAKE</div>
+      </div>
+    </main>
+  );
+}
+function RoidBoyView() {
+  return (
+    <main className="mainStage">
+      <div className="viewPad">
+        <div className="viewTitle">ROID BOY</div>
+      </div>
+    </main>
+  );
+}
+function MomentsView() {
+  return (
+    <main className="mainStage">
+      <div className="viewPad">
+        <div className="viewTitle">MOMENTS</div>
+      </div>
+    </main>
+  );
+}
+function PSView() {
+  return (
+    <main className="mainStage">
+      <div className="viewPad">
+        <div className="viewTitle">P.S.</div>
+      </div>
+    </main>
+  );
+}
+function SummationView() {
+  return (
+    <main className="mainStage">
+      <div className="viewPad">
+        <div className="viewTitle">THE SUMMATION</div>
+      </div>
+    </main>
+  );
+}
+function YearReviewView() {
+  return (
+    <main className="mainStage">
+      <div className="viewPad">
+        <div className="viewTitle">YEAR REVIEW</div>
+      </div>
+    </main>
+  );
+}
+function SealView() {
+  return (
+    <main className="mainStage">
+      <div className="viewPad">
+        <div className="viewTitle">SEAL</div>
+      </div>
+    </main>
+  );
+}
 
 export default function AppShell() {
-  // routes (LOCKED)
-  // daily hub landing = "hub"
-  const [active, setActive] = useState("hub");
+  // LOCKED: Daily Hub landing is "today"
+  const [active, setActive] = useState("today");
   const [weaving, setWeaving] = useState(false);
 
-  // swipe-only sidebar
-  const [navOpen, setNavOpen] = useState(false);
+  // hash route support: #today #intake #roidboy #moments #ps #summation #yearreview #seal
+  useEffect(() => {
+    const normalize = (raw) => {
+      const v = String(raw || "").replace("#", "").toLowerCase();
+      const allowed = new Set([
+        "today",
+        "intake",
+        "roidboy",
+        "moments",
+        "ps",
+        "summation",
+        "yearreview",
+        "seal"
+      ]);
+      return allowed.has(v) ? v : "today";
+    };
+
+    const apply = () => {
+      const v = normalize(window.location.hash);
+      setActive(v);
+    };
+
+    apply();
+    window.addEventListener("hashchange", apply);
+    return () => window.removeEventListener("hashchange", apply);
+  }, []);
 
   const nav = useMemo(
     () => (id) => {
-      // universal weave transition between sections
-      if (id === active) {
-        setNavOpen(false);
-        return;
-      }
+      // universal weave on every section change
       setWeaving(true);
       setTimeout(() => {
         setActive(id);
+        try {
+          const desired = `#${id}`;
+          if (window.location.hash !== desired) window.history.replaceState(null, "", desired);
+        } catch {}
         setWeaving(false);
-        setNavOpen(false);
       }, 520);
     },
-    [active]
+    []
   );
-
-  // right-edge, bottom-right-ish swipe to open
-  useEffect(() => {
-    let startX = 0;
-    let startY = 0;
-    let tracking = false;
-
-    const onTouchStart = (e) => {
-      const t = e.touches && e.touches[0];
-      if (!t) return;
-
-      const w = window.innerWidth || 0;
-      const h = window.innerHeight || 0;
-
-      // bottom-right corner zone
-      const inRightEdge = t.clientX > w - 26;
-      const inBottomZone = t.clientY > h * 0.55;
-
-      if (!inRightEdge || !inBottomZone) return;
-
-      tracking = true;
-      startX = t.clientX;
-      startY = t.clientY;
-    };
-
-    const onTouchMove = (e) => {
-      if (!tracking) return;
-      const t = e.touches && e.touches[0];
-      if (!t) return;
-
-      const dx = startX - t.clientX; // swipe left to open
-      const dy = Math.abs(t.clientY - startY);
-
-      if (dy > 44) return;
-      if (dx > 30) setNavOpen(true);
-    };
-
-    const onTouchEnd = () => {
-      tracking = false;
-    };
-
-    window.addEventListener("touchstart", onTouchStart, { passive: true });
-    window.addEventListener("touchmove", onTouchMove, { passive: true });
-    window.addEventListener("touchend", onTouchEnd, { passive: true });
-
-    return () => {
-      window.removeEventListener("touchstart", onTouchStart);
-      window.removeEventListener("touchmove", onTouchMove);
-      window.removeEventListener("touchend", onTouchEnd);
-    };
-  }, []);
 
   const now = new Date();
   const day = now.toLocaleDateString(undefined, { weekday: "long" }).toUpperCase();
@@ -99,31 +125,34 @@ export default function AppShell() {
     .toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })
     .toUpperCase();
 
-  const renderMain = () => {
-    // Daily Hub landing: Assessment → Intake → Context → Summation
-    if (active === "hub") {
+  const renderView = () => {
+    if (active === "today") {
+      // Daily Hub landing: Assessment → Intake → Context → Summation
+      // We are NOT re-creating your assessment form here (no invention).
+      // This is just the correct landing structure so your existing AssessmentView can be slotted in next.
       return (
         <main className="mainStage">
-          <section className="hubBlock">
-            <AssessmentView embedded />
-          </section>
+          <div className="hubWrap">
+            <section className="hubBlock">
+              <div className="hubBlockTitle">THE ASSESSMENT</div>
+              <div className="hubStub">[AssessmentView mounts here]</div>
+            </section>
 
-          <section className="hubBlock">
-            <IntakeView embedded />
-          </section>
+            <section className="hubBlock">
+              <div className="hubBlockTitle">THE INTAKE</div>
+              <div className="hubStub">[Intake progress bars + goals mount here]</div>
+            </section>
 
-          <section className="hubBlock">
-            <div className="hubTitle">THE CONTEXT</div>
-            {/* Context auto-populates from Moments + Roid Boy + P.S. (wired later) */}
-            <div className="card">
-              <div className="cardHead">CONTEXT FEED</div>
-              <div className="small">Auto-lands here once entries are completed.</div>
-            </div>
-          </section>
+            <section className="hubBlock">
+              <div className="hubBlockTitle">THE CONTEXT</div>
+              <div className="hubStub">[Auto from Moments + Roid Boy + P.S.]</div>
+            </section>
 
-          <section className="hubBlock">
-            <SummationView embedded />
-          </section>
+            <section className="hubBlock">
+              <div className="hubBlockTitle">THE SUMMATION</div>
+              <div className="hubStub">[SummationView mounts here]</div>
+            </section>
+          </div>
         </main>
       );
     }
@@ -133,24 +162,24 @@ export default function AppShell() {
     if (active === "moments") return <MomentsView />;
     if (active === "ps") return <PSView />;
     if (active === "summation") return <SummationView />;
-    if (active === "year") return <YearReviewView />;
-    if (active === "library") return <LibraryView />;
+    if (active === "yearreview") return <YearReviewView />;
     if (active === "seal") return <SealView />;
 
-    return <main className="mainStage" />;
+    return (
+      <main className="mainStage">
+        <div className="viewPad">
+          <div className="viewTitle">—</div>
+        </div>
+      </main>
+    );
   };
 
   return (
     <div className="appRoot">
-      {/* Top Header (LOCKED) */}
+      {/* LOCKED HEADER */}
       <header className="topbar">
         <div className="topLeft">
-          <img
-            src="/glyphs/sigil-eye.png"
-            alt=""
-            className="eyeGlyph"
-            draggable={false}
-          />
+          <img className="headerGlyph" src="/ui/glyphs/sigil-eye.svg" alt="" />
         </div>
 
         <div className="topCenter">
@@ -158,20 +187,15 @@ export default function AppShell() {
         </div>
 
         <div className="topRight">
-          <div className="chip">{day}</div>
-          <div className="chip">{date}</div>
+          <div className="headerChip">{day}</div>
+          <div className="headerChip">{date}</div>
         </div>
       </header>
 
-      {/* Sidebar (swipe-only) */}
-      <Sidebar
-        open={navOpen}
-        active={active}
-        onSelect={nav}
-        onClose={() => setNavOpen(false)}
-      />
+      {/* Sidebar handles open/close itself (right-edge swipe hotzone is inside Sidebar) */}
+      <Sidebar active={active} onSelect={nav} />
 
-      {renderMain()}
+      {renderView()}
 
       {weaving ? <Weave /> : null}
     </div>
