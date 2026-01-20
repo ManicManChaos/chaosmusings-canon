@@ -1,12 +1,7 @@
-"use client";
-
-export default function Weave({ show = true }) {
-  if (!show) return null;
-
+export default function Weave() {
   return (
-    <div className="weaveOverlay" aria-hidden="true">
-      <div className="weaveVeil" />
-      <div className="weaveGrain" />
+    <div className="weave">
+      <div className="weaveInner" />
     </div>
   );
 }
