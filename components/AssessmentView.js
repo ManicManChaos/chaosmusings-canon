@@ -1,132 +1,174 @@
-// components/AssessmentView.js
 "use client";
 
-import { useMemo, useState } from "react";
-
-function formatDayParts(d) {
-  const weekday = d.toLocaleDateString("en-US", { weekday: "long" }).toUpperCase();
-  const date = d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }).toUpperCase();
-  const time = d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }).toUpperCase();
-  return { weekday, date, time };
-}
+import { useMemo } from "react";
 
 export default function AssessmentView() {
-  const now = useMemo(() => new Date(), []);
-  const parts = useMemo(() => formatDayParts(now), [now]);
+  const moods = useMemo(
+    () => [
+      "",
+      "Horny for Peace",
+      "Feral & Focused",
+      "Violently Calm",
+      "Plotting With a Semi",
+      "Built Like a Threat",
+      "Calm Like a Loaded Weapon",
+      "Observing Before Engaging",
+      "Silence Is Strategic",
+      "Hyperfocused and Unreachable",
+      "Overstimulated but Managing",
+      "Unmasked and Exposed",
+      "Indifferent and Relieved",
+      "Regulated Enough",
+      "Still Standing"
+    ],
+    []
+  );
 
-  // Minimal state (no helper copy)
-  const [title, setTitle] = useState("");
-  const [location, setLocation] = useState("");
-  const [mood, setMood] = useState("");
-  const [era, setEra] = useState("");
-  const [headHummer, setHeadHummer] = useState(""); // Song of the day input
-  const [word, setWord] = useState("");
-  const [singleness, setSingleness] = useState("");
+  const eras = useMemo(
+    () => [
+      "",
+      "Villain Era",
+      "Whore4More",
+      "Plotting Season",
+      "Built, Not Broken",
+      "Hard Body, Harder Boundaries",
+      "Detachment Training",
+      "Gym God Ascension",
+      "Strength Without Apology",
+      "Discipline Over Desire",
+      "Power Stabilization",
+      "Hyperfocus Arc",
+      "Manic Clarity Window",
+      "Burnout Containment",
+      "Knowing Exactly Who I Am"
+    ],
+    []
+  );
 
-  // Keep options light here; you can paste your canon lists later without layout changes.
-  const MOOD = useMemo(() => ["LOCKED IN", "CALM", "HEATED", "SOFT", "SAVAGE"], []);
-  const ERA = useMemo(() => ["(OPTIONAL)"], []);
-  const SINGLE = useMemo(() => ["AWARE", "UNBOTHERED", "TEMPTED", "ON ONE"], []);
+  const singles = useMemo(
+    () => [
+      "",
+      "Single and Self-Controlled",
+      "Single, Not Looking",
+      "Single but Curious",
+      "Crushing Quietly",
+      "Mutual Tension, No Labels",
+      "Attracted but Guarded",
+      "Emotionally Involved",
+      "Unavailable by Design",
+      "Heart Closed for Maintenance",
+      "Choosing Myself"
+    ],
+    []
+  );
+
+  // Your request: snarky, explicit, active — no “low/high/awake/off” boring labels.
+  const libido = useMemo(
+    () => [
+      "",
+      "I’d ruin a man politely",
+      "One compliment away from a crime",
+      "If he texts “wyd” it’s over",
+      "Ready to misbehave responsibly",
+      "Down bad, but with standards",
+      "Touch-starved and dangerous",
+      "Flirting like it’s cardio",
+      "Acting calm, thinking filthy",
+      "Aroused by discipline",
+      "Unholy but well-mannered",
+      "Need a mouth, not a conversation",
+      "I’m the problem and the solution",
+      "If he’s tall, I’m folding",
+      "Hunting, not hoping",
+      "I could be convinced"
+    ],
+    []
+  );
 
   return (
     <section className="card">
-      {/* Top header row */}
-      <div className="hubHeader">
-        <div className="hubLeft">
-          <img className="hubEye" src="/ui/glyphs/sigil-eye.svg" alt="" />
-        </div>
-
-        <div className="hubCenter">TELL NO LIES</div>
-
-        <div className="hubRight">
-          <div className="chip">{parts.weekday}</div>
-          <div className="chip">{parts.date}</div>
-          <div className="chip">{parts.time}</div>
+      <div className="cardHead" style={S.head}>
+        <div style={S.left}>
+          <img
+            src="/ui/glyphs/sigil-eye.svg"
+            alt=""
+            draggable={false}
+            style={S.eye}
+          />
+          <div style={S.title}>THE ASSESSMENT</div>
         </div>
       </div>
 
-      <div className="view">
-        <div className="zone">
-          <div className="zoneHead">
-            <div className="zoneTitle">THE ASSESSMENT</div>
+      <div className="cardBody" style={{ padding: 14 }}>
+        <div className="grid2">
+          <input className="inp" placeholder="TITLE OF THE DAY" />
+          <input className="inp" placeholder="LOCATION" />
+        </div>
 
-            {/* Four small rune buttons (visual only for now) */}
-            <div className="floatTools" aria-hidden="true">
-              <button className="glyphBtn" type="button" tabIndex={-1} />
-              <button className="glyphBtn" type="button" tabIndex={-1} />
-              <button className="glyphBtn" type="button" tabIndex={-1} />
-              <button className="glyphBtn" type="button" tabIndex={-1} />
-            </div>
-          </div>
+        <div className="grid2" style={{ marginTop: 10 }}>
+          <select className="inp" defaultValue="">
+            {moods.map((t) => (
+              <option key={t} value={t}>
+                {t ? t.toUpperCase() : "MOOD…"}
+              </option>
+            ))}
+          </select>
 
-          <div className="titleRow">
-            <input
-              className="titleInput"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="TITLE"
-              aria-label="Title"
-            />
-          </div>
+          <input className="inp" placeholder="WORD OF THE DAY" />
+        </div>
 
-          <div className="grid2">
-            <div className="field">
-              <label>LOCATION</label>
-              <input value={location} onChange={(e) => setLocation(e.target.value)} placeholder="—" />
-            </div>
+        <div className="grid2" style={{ marginTop: 10 }}>
+          <select className="inp" defaultValue="">
+            {eras.map((t) => (
+              <option key={t} value={t}>
+                {t ? t.toUpperCase() : "ERA…"}
+              </option>
+            ))}
+          </select>
 
-            <div className="field">
-              <label>HEAD HUMMER</label>
-              <input
-                value={headHummer}
-                onChange={(e) => setHeadHummer(e.target.value)}
-                placeholder="—"
-              />
-            </div>
+          <select className="inp" defaultValue="">
+            {singles.map((t) => (
+              <option key={t} value={t}>
+                {t ? t.toUpperCase() : "SINGLE STATUS…"}
+              </option>
+            ))}
+          </select>
+        </div>
 
-            <div className="field">
-              <label>MOOD</label>
-              <select value={mood} onChange={(e) => setMood(e.target.value)}>
-                <option value="">SELECT…</option>
-                {MOOD.map((x) => (
-                  <option key={x} value={x}>
-                    {x}
-                  </option>
-                ))}
-              </select>
-            </div>
+        <div className="grid2" style={{ marginTop: 10 }}>
+          <select className="inp" defaultValue="">
+            {libido.map((t) => (
+              <option key={t} value={t}>
+                {t ? t.toUpperCase() : "LIBIDO STATUS…"}
+              </option>
+            ))}
+          </select>
 
-            <div className="field">
-              <label>WORD OF THE DAY</label>
-              <input value={word} onChange={(e) => setWord(e.target.value)} placeholder="—" />
-            </div>
-
-            <div className="field">
-              <label>ERA</label>
-              <select value={era} onChange={(e) => setEra(e.target.value)}>
-                <option value="">(OPTIONAL)</option>
-                {ERA.filter((x) => x !== "(OPTIONAL)").map((x) => (
-                  <option key={x} value={x}>
-                    {x}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="field">
-              <label>SINGLENESS LEVEL</label>
-              <select value={singleness} onChange={(e) => setSingleness(e.target.value)}>
-                <option value="">SELECT…</option>
-                {SINGLE.map((x) => (
-                  <option key={x} value={x}>
-                    {x}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
+          {/* INTENT removed. HEAD HUMMER added. */}
+          <input className="inp" placeholder="HEAD HUMMER (SONG OF THE DAY)" />
         </div>
       </div>
     </section>
   );
 }
+
+const S = {
+  head: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: "14px 16px 10px"
+  },
+  left: { display: "flex", alignItems: "center", gap: 10 },
+  eye: {
+    width: 22,
+    height: 22,
+    opacity: 0.95,
+    filter: "drop-shadow(0 0 10px rgba(255,90,168,.18))"
+  },
+  title: {
+    letterSpacing: ".22em",
+    textTransform: "uppercase",
+    fontWeight: 650
+  }
+};
