@@ -90,4 +90,4 @@ A clean slate removes:
 - mixed asset locations,
 - and inconsistent styles across deployments.
 
-The goal is a single, predictable baseline you can **lock** and build forward from without regressions.
+The goal is a single, predictable baseline you can **lock** and build forward 
