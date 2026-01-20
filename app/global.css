@@ -389,3 +389,8 @@ body::before{
   65%{ opacity:1; }
   100%{ opacity:0; transform: scale(1.04); }
 }
+/* Lock opening visuals: disable shimmer/animated overlays while OpeningFlow is active */
+body.mmoc-opening-on::before{
+  animation: none !important;
+  opacity: 0 !important;
+}
