@@ -38,6 +38,13 @@ export default function OpeningFlow({ onDone }) {
   };
 
   useEffect(() => {
+    document.body.classList.add("mmoc-opening-on");
+    return () => {
+      document.body.classList.remove("mmoc-opening-on");
+    };
+  }, []);
+
+  useEffect(() => {
     let alive = true;
 
     const boot = async () => {
@@ -81,7 +88,6 @@ export default function OpeningFlow({ onDone }) {
           ? window.location.origin
           : "https://chaosmusings.app";
 
-      // redirect back into YOUR APP domain
       const redirectTo = `${origin}/auth/callback`;
 
       const { error } = await supabase.auth.signInWithOAuth({
@@ -89,7 +95,6 @@ export default function OpeningFlow({ onDone }) {
         options: { redirectTo },
       });
 
-      // If it doesn't redirect, re-arm Stage 1.
       if (error) {
         setBusy(false);
         setStage(1);
@@ -139,6 +144,7 @@ const S = {
     touchAction: "manipulation",
     WebkitTapHighlightColor: "transparent",
     userSelect: "none",
+    isolation: "isolate",
   },
   bg: {
     position: "absolute",
@@ -147,16 +153,16 @@ const S = {
     height: "100%",
     objectFit: "cover",
     objectPosition: "center",
-    transform: "translateZ(0)",
+    // remove any micro-jitter sources
+    transform: "none",
+    backfaceVisibility: "hidden",
   },
-
-  // Invisible-but-clickable sigil zone — moved DOWN (waist placement)
   sigilBtn: {
     position: "absolute",
     left: "50%",
-    top: "62%",
-    width: "132px",
-    height: "132px",
+    top: "50%",
+    width: "120px",
+    height: "120px",
     transform: "translate(-50%, -50%)",
     borderRadius: "999px",
     border: "0",
