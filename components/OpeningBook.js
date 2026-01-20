@@ -1,72 +1,101 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Weave from "./Weave";
+import { supabase } from "@/lib/supabaseClient";
 
-const STAGES = [
-  { id: 1, src: "/flow/flow-1.png" }, // eyes closed (sigil at waist)
-  { id: 2, src: "/flow/flow-2.png" }, // github login stage
-  { id: 3, src: "/flow/flow-3.png" }  // final breathe → app
-];
+const IMG1 = "/flow/state-1-opening.png";
+const IMG2 = "/flow/state-2-auth.png";
+const IMG3 = "/flow/state-3-arrival.png";
 
 export default function OpeningBook({ onDone }) {
-  const [stage, setStage] = useState(1);
-  const [weaving, setWeaving] = useState(false);
+  const [stage, setStage] = useState("opening"); // opening | auth | arrival
+  const [busy, setBusy] = useState(false);
 
-  const current = useMemo(() => STAGES.find((s) => s.id === stage), [stage]);
+  const stageImg = useMemo(() => {
+    if (stage === "auth") return IMG2;
+    if (stage === "arrival") return IMG3;
+    return IMG1;
+  }, [stage]);
 
-  // If user returns from OAuth and lands on /#access_token... or /#today, skip to app.
+  // Boot logic:
+  // - If mmoc_gate_state=arrival → show arrival briefly then onDone
+  // - Else if already authed → show arrival briefly then onDone
+  // - Else → show opening with sigil
   useEffect(() => {
-    const h = (typeof window !== "undefined" ? window.location.hash : "") || "";
-    if (h.includes("access_token") || h.includes("refresh_token") || h.includes("#today")) {
-      onDone?.();
-    }
+    let t1 = null;
+
+    const boot = async () => {
+      let gateState = null;
+      try {
+        gateState = localStorage.getItem("mmoc_gate_state");
+      } catch {}
+
+      if (gateState === "arrival") {
+        setStage("arrival");
+        try {
+          localStorage.removeItem("mmoc_gate_state");
+        } catch {}
+        t1 = setTimeout(() => onDone?.(), 900);
+        return;
+      }
+
+      const { data } = await supabase.auth.getSession();
+      if (data?.session) {
+        setStage("arrival");
+        t1 = setTimeout(() => onDone?.(), 900);
+        return;
+      }
+
+      setStage("opening");
+    };
+
+    boot();
+    return () => {
+      if (t1) clearTimeout(t1);
+    };
   }, [onDone]);
 
-  const go = (next) => {
-    setWeaving(true);
-    setTimeout(() => {
-      setStage(next);
-      setWeaving(false);
-    }, 520);
-  };
+  const startAuth = async () => {
+    if (busy) return;
+    setBusy(true);
 
-  const onPrimary = () => {
-    // 1 -> 2 (your GitHub auth is already wired via Supabase on the button in stage 2)
-    if (stage === 1) return go(2);
+    // show auth state immediately
+    setStage("auth");
+    try {
+      localStorage.setItem("mmoc_gate_state", "auth");
+    } catch {}
 
-    // 2 -> 3 (post-auth, user will come back; but allow manual continue as well)
-    if (stage === 2) return go(3);
+    const redirectTo =
+      typeof window !== "undefined"
+        ? `${window.location.origin}/auth/callback`
+        : "";
 
-    // 3 -> app
-    if (stage === 3) return onDone?.();
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "github",
+      options: { redirectTo }
+    });
+
+    if (error) {
+      console.error("[OpeningBook] OAuth error:", error);
+      setBusy(false);
+      setStage("opening");
+    }
   };
 
   return (
-    <div className="openingRoot">
-      <div className="openingStage">
-        {STAGES.map((s) => (
-          <img
-            key={s.id}
-            className={`openingImg ${s.id === stage ? "isOn" : ""}`}
-            src={s.src}
-            alt=""
-            draggable={false}
-          />
-        ))}
+    <div className="gateWrap">
+      <div className="gateCard">
+        <div className="gateStage">
+          <img className="gateImg isOn" src={stageImg} alt="" />
 
-        <button
-          className="sigilBtn"
-          type="button"
-          onClick={onPrimary}
-          aria-label="Continue"
-        >
-          <span className="sigilRing" />
-          <span className="sigilCore" />
-        </button>
+          {stage === "opening" ? (
+            <button className="sigilBtn" onClick={startAuth} type="button" aria-label="Enter">
+              <span className="sigilRing" />
+              <span className="sigilCore" />
+            </button>
+          ) : null}
+        </div>
       </div>
-
-      <Weave show={weaving} />
     </div>
   );
 }
