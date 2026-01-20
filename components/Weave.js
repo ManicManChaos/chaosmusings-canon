@@ -1,11 +1,12 @@
+// components/Weave.js
 "use client";
 
-export default function Weave() {
-  // Simple universal overlay. Styling is driven by global.css.
+export default function Weave({ show }) {
+  if (!show) return null;
+
   return (
     <div className="weaveOverlay" aria-hidden="true">
-      <div className="weaveVeil" />
-      <div className="weaveCenter" />
+      <div className="weaveFilm" />
     </div>
   );
 }
