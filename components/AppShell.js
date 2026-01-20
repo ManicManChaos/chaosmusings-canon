@@ -1,203 +1,130 @@
+// components/AppShell.js
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Sidebar from "@/components/Sidebar";
+import OpeningFlow from "@/components/OpeningFlow";
 import Weave from "@/components/Weave";
 
-// If you already have these files, keep the imports and remove the inline stubs.
-// If you do NOT have them yet, leave the inline stubs for now (they won’t invent helper text).
-// Later we will replace each stub with your fully approved view files.
-function IntakeView() {
-  return (
-    <main className="mainStage">
-      <div className="viewPad">
-        <div className="viewTitle">INTAKE</div>
-      </div>
-    </main>
-  );
-}
-function RoidBoyView() {
-  return (
-    <main className="mainStage">
-      <div className="viewPad">
-        <div className="viewTitle">ROID BOY</div>
-      </div>
-    </main>
-  );
-}
-function MomentsView() {
-  return (
-    <main className="mainStage">
-      <div className="viewPad">
-        <div className="viewTitle">MOMENTS</div>
-      </div>
-    </main>
-  );
-}
-function PSView() {
-  return (
-    <main className="mainStage">
-      <div className="viewPad">
-        <div className="viewTitle">P.S.</div>
-      </div>
-    </main>
-  );
-}
-function SummationView() {
-  return (
-    <main className="mainStage">
-      <div className="viewPad">
-        <div className="viewTitle">THE SUMMATION</div>
-      </div>
-    </main>
-  );
-}
-function YearReviewView() {
-  return (
-    <main className="mainStage">
-      <div className="viewPad">
-        <div className="viewTitle">YEAR REVIEW</div>
-      </div>
-    </main>
-  );
-}
-function SealView() {
-  return (
-    <main className="mainStage">
-      <div className="viewPad">
-        <div className="viewTitle">SEAL</div>
-      </div>
-    </main>
-  );
-}
+// Views (use what exists; if a file is missing it will error at build — so only import what you have)
+import AssessmentView from "@/components/AssessmentView";
 
 export default function AppShell() {
-  // LOCKED: Daily Hub landing is "today"
+  const [openingDone, setOpeningDone] = useState(false);
+
+  // Active section (hash routed)
   const [active, setActive] = useState("today");
+
+  // Weave must be authoritative
   const [weaving, setWeaving] = useState(false);
+  const weaveTimer = useRef(null);
 
-  // hash route support: #today #intake #roidboy #moments #ps #summation #yearreview #seal
+  const normalize = (v) => {
+    const id = String(v || "").replace("#", "").toLowerCase();
+    const allowed = [
+      "today",
+      "intake",
+      "roidboy",
+      "moments",
+      "ps",
+      "summation",
+      "yearreview",
+      "seal",
+    ];
+    return allowed.includes(id) ? id : "today";
+  };
+
+  const applyHash = () => {
+    const next = normalize(window.location.hash);
+    setActive(next);
+  };
+
   useEffect(() => {
-    const normalize = (raw) => {
-      const v = String(raw || "").replace("#", "").toLowerCase();
-      const allowed = new Set([
-        "today",
-        "intake",
-        "roidboy",
-        "moments",
-        "ps",
-        "summation",
-        "yearreview",
-        "seal"
-      ]);
-      return allowed.has(v) ? v : "today";
-    };
-
-    const apply = () => {
-      const v = normalize(window.location.hash);
-      setActive(v);
-    };
-
-    apply();
-    window.addEventListener("hashchange", apply);
-    return () => window.removeEventListener("hashchange", apply);
+    applyHash();
+    window.addEventListener("hashchange", applyHash);
+    return () => window.removeEventListener("hashchange", applyHash);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const nav = useMemo(
     () => (id) => {
-      // universal weave on every section change
+      const next = normalize(id);
+
+      // weave blocks section change
       setWeaving(true);
-      setTimeout(() => {
-        setActive(id);
-        try {
-          const desired = `#${id}`;
-          if (window.location.hash !== desired) window.history.replaceState(null, "", desired);
-        } catch {}
+
+      if (weaveTimer.current) window.clearTimeout(weaveTimer.current);
+      weaveTimer.current = window.setTimeout(() => {
+        setActive(next);
+        window.location.hash = `#${next}`;
         setWeaving(false);
       }, 520);
     },
     []
   );
 
-  const now = new Date();
-  const day = now.toLocaleDateString(undefined, { weekday: "long" }).toUpperCase();
-  const date = now
-    .toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })
-    .toUpperCase();
+  const enterAppFromOpening = () => {
+    // First entry into app also goes through weave
+    setWeaving(true);
+    window.setTimeout(() => {
+      setOpeningDone(true);
 
-  const renderView = () => {
-    if (active === "today") {
-      // Daily Hub landing: Assessment → Intake → Context → Summation
-      // We are NOT re-creating your assessment form here (no invention).
-      // This is just the correct landing structure so your existing AssessmentView can be slotted in next.
-      return (
-        <main className="mainStage">
-          <div className="hubWrap">
-            <section className="hubBlock">
-              <div className="hubBlockTitle">THE ASSESSMENT</div>
-              <div className="hubStub">[AssessmentView mounts here]</div>
-            </section>
-
-            <section className="hubBlock">
-              <div className="hubBlockTitle">THE INTAKE</div>
-              <div className="hubStub">[Intake progress bars + goals mount here]</div>
-            </section>
-
-            <section className="hubBlock">
-              <div className="hubBlockTitle">THE CONTEXT</div>
-              <div className="hubStub">[Auto from Moments + Roid Boy + P.S.]</div>
-            </section>
-
-            <section className="hubBlock">
-              <div className="hubBlockTitle">THE SUMMATION</div>
-              <div className="hubStub">[SummationView mounts here]</div>
-            </section>
-          </div>
-        </main>
-      );
-    }
-
-    if (active === "intake") return <IntakeView />;
-    if (active === "roidboy") return <RoidBoyView />;
-    if (active === "moments") return <MomentsView />;
-    if (active === "ps") return <PSView />;
-    if (active === "summation") return <SummationView />;
-    if (active === "yearreview") return <YearReviewView />;
-    if (active === "seal") return <SealView />;
-
-    return (
-      <main className="mainStage">
-        <div className="viewPad">
-          <div className="viewTitle">—</div>
-        </div>
-      </main>
-    );
+      // land on today by doctrine
+      if (!window.location.hash || window.location.hash === "#") {
+        window.location.hash = "#today";
+      }
+      setActive(normalize(window.location.hash));
+      setWeaving(false);
+    }, 520);
   };
+
+  // Opening gates everything. App does not mount until done.
+  if (!openingDone) {
+    return (
+      <>
+        <OpeningFlow onDone={enterAppFromOpening} />
+        <Weave show={weaving} />
+      </>
+    );
+  }
 
   return (
     <div className="appRoot">
-      {/* LOCKED HEADER */}
+      <Sidebar active={active} onSelect={nav} />
+
       <header className="topbar">
         <div className="topLeft">
-          <img className="headerGlyph" src="/ui/glyphs/sigil-eye.svg" alt="" />
-        </div>
-
-        <div className="topCenter">
-          <div className="brandTitle">TELL NO LIES</div>
+          <img
+            className="topEye"
+            src="/ui/glyphs/sigil-eye.svg"
+            alt=""
+            draggable={false}
+          />
+          <div className="topTitle">TELL NO LIES</div>
         </div>
 
         <div className="topRight">
-          <div className="headerChip">{day}</div>
-          <div className="headerChip">{date}</div>
+          <div className="topDate">
+            {new Date().toLocaleDateString(undefined, {
+              weekday: "long",
+              month: "short",
+              day: "numeric",
+            }).toUpperCase()}
+          </div>
         </div>
       </header>
 
-      {/* Sidebar handles open/close itself (right-edge swipe hotzone is inside Sidebar) */}
-      <Sidebar active={active} onSelect={nav} />
+      <main className="mainStage">
+        {active === "today" ? <AssessmentView /> : null}
 
-      {renderView()}
+        {/* The other views will be added as full files next.
+            For now: do NOT invent. Keep blank when not implemented. */}
+        {active !== "today" ? (
+          <div className="emptyStage" aria-hidden="true" />
+        ) : null}
+      </main>
 
-      {weaving ? <Weave /> : null}
+      <Weave show={weaving} />
     </div>
   );
 }
