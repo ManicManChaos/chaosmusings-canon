@@ -6,9 +6,9 @@ import { supabase } from "@/lib/supabaseClient";
 
 /**
  * Canon Opening Flow (LOCKED):
- * Stage 1: stage-1-opening.png  (sigil press triggers GitHub OAuth)
- * Stage 2: stage-2-auth.png     (shown while OAuth happens)
- * Stage 3: stage-3-arrival.png  (brief arrival, then unlock app)
+ * Stage 1: /flow/stage-1-opening.png  (sigil press triggers GitHub OAuth)
+ * Stage 2: /flow/stage-2-auth.png     (shown while OAuth happens)
+ * Stage 3: /flow/stage-3-arrival.png  (brief arrival, then unlock app)
  *
  * No helper text. No layout drift. iPad-first.
  */
@@ -45,11 +45,9 @@ export default function OpeningFlow({ onDone }) {
         const { data } = await supabase.auth.getSession();
         if (!alive) return;
 
-        // If already authed, skip straight to arrival
         if (data?.session) {
           goArrivalThenFinish();
         } else {
-          // Stay on Stage 1 until sigil press
           setStage(1);
         }
       } catch {
@@ -62,9 +60,7 @@ export default function OpeningFlow({ onDone }) {
 
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!alive) return;
-      if (session) {
-        goArrivalThenFinish();
-      }
+      if (session) goArrivalThenFinish();
     });
 
     return () => {
@@ -77,8 +73,6 @@ export default function OpeningFlow({ onDone }) {
   const startGithub = async () => {
     if (busy) return;
     setBusy(true);
-
-    // Stage 2 is the auth visual state
     setStage(2);
 
     try {
@@ -87,18 +81,15 @@ export default function OpeningFlow({ onDone }) {
           ? window.location.origin
           : "https://chaosmusings.app";
 
-      // IMPORTANT: redirect back into YOUR APP (not Supabase domain)
+      // redirect back into YOUR APP domain
       const redirectTo = `${origin}/auth/callback`;
 
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "github",
-        options: {
-          redirectTo,
-          // scopes optional; keep minimal
-        },
+        options: { redirectTo },
       });
 
-      // signInWithOAuth will redirect away. If it doesn't, re-arm Stage 1.
+      // If it doesn't redirect, re-arm Stage 1.
       if (error) {
         setBusy(false);
         setStage(1);
@@ -117,13 +108,11 @@ export default function OpeningFlow({ onDone }) {
         draggable={false}
         style={S.bg}
         onError={() => {
-          // If something is wrong with image path, fail safe to Stage 1
           setStage(1);
           setBusy(false);
         }}
       />
 
-      {/* Stage 1: Sigil press hotspot (no text) */}
       {stage === 1 ? (
         <button
           type="button"
@@ -161,14 +150,13 @@ const S = {
     transform: "translateZ(0)",
   },
 
-  // Invisible-but-clickable sigil zone (centered)
-  // You can adjust size later without changing flow logic.
+  // Invisible-but-clickable sigil zone — moved DOWN (waist placement)
   sigilBtn: {
     position: "absolute",
     left: "50%",
-    top: "50%",
-    width: "120px",
-    height: "120px",
+    top: "62%",
+    width: "132px",
+    height: "132px",
     transform: "translate(-50%, -50%)",
     borderRadius: "999px",
     border: "0",
