@@ -2,8 +2,6 @@
 "use client";
 
 export default function AssessmentView() {
-  // DO NOT import any lib/assets. Everything visual comes from CSS + public/.
-  // This file is intentionally UI-only right now (no helper text, no invented copy).
   return (
     <section className="card">
       <div className="cardHead">THE ASSESSMENT</div>
@@ -20,7 +18,7 @@ export default function AssessmentView() {
         </div>
 
         <div className="assessRow">
-          <div className="assessLabel">INTENT / FOCUS</div>
+          <div className="assessLabel">HEAD HUMMER</div>
           <input className="inp" placeholder="" />
         </div>
 
@@ -48,11 +46,6 @@ export default function AssessmentView() {
           <select className="inp">
             <option value="">SELECT…</option>
           </select>
-        </div>
-
-        <div className="assessRow full">
-          <div className="assessLabel">HEAD HUMMER</div>
-          <input className="inp" placeholder="" />
         </div>
       </div>
     </section>
