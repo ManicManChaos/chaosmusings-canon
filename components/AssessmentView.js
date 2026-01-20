@@ -62,7 +62,6 @@ export default function AssessmentView() {
     []
   );
 
-  // Your request: snarky, explicit, active — no “low/high/awake/off” boring labels.
   const libido = useMemo(
     () => [
       "",
@@ -89,11 +88,12 @@ export default function AssessmentView() {
     <section className="card">
       <div className="cardHead" style={S.head}>
         <div style={S.left}>
+          {/* ORNATE DAILY HUB MARKER (PNG) — locked */}
           <img
-            src="/ui/glyphs/sigil-eye.svg"
+            src="/ui/png/sigil-eye.png"
             alt=""
             draggable={false}
-            style={S.eye}
+            style={S.ornateEye}
           />
           <div style={S.title}>THE ASSESSMENT</div>
         </div>
@@ -144,7 +144,7 @@ export default function AssessmentView() {
             ))}
           </select>
 
-          {/* INTENT removed. HEAD HUMMER added. */}
+          {/* Intent is NOT here. */}
           <input className="inp" placeholder="HEAD HUMMER (SONG OF THE DAY)" />
         </div>
       </div>
@@ -160,11 +160,12 @@ const S = {
     padding: "14px 16px 10px"
   },
   left: { display: "flex", alignItems: "center", gap: 10 },
-  eye: {
-    width: 22,
-    height: 22,
-    opacity: 0.95,
-    filter: "drop-shadow(0 0 10px rgba(255,90,168,.18))"
+  ornateEye: {
+    width: 28,
+    height: 28,
+    opacity: 0.98,
+    objectFit: "contain",
+    filter: "drop-shadow(0 0 12px rgba(255,90,168,.18))"
   },
   title: {
     letterSpacing: ".22em",
