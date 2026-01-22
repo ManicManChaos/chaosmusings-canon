@@ -1,0 +1,41 @@
+/* === CHAOS MUSINGS CANON : GLOBAL LOCK === */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #000;
+  color: #e6dccf;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  overscroll-behavior: none;
+}
+
+body {
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  padding: 0;
+}
+
+:root {
+  --gold: #c9a96a;
+  --ink: #0b0b0b;
+  --veil: rgba(0, 0, 0, 0.6);
+}
