@@ -9,7 +9,7 @@ const NAV = [
   { id: "moments", glyph: "/ui/glyphs/moments.svg" },
   { id: "ps", glyph: "/ui/glyphs/ps.svg" },
   { id: "summation", glyph: "/ui/glyphs/summation.svg" },
-  { id: "yearreview", glyph: "/ui/glyphs/year-review.svg" },
+  { id: "yearreview", glyph: "/ui/glyphs/year.svg" },
   { id: "seal", glyph: "/ui/glyphs/directory.svg" }
 ];
 
