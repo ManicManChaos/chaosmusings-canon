@@ -1,9 +1,8 @@
-// app/page.js
 "use client";
 
 import { useState } from "react";
-import AppShell from "@/components/AppShell";
 import OpeningFlow from "@/components/OpeningFlow";
+import AppShell from "@/components/AppShell";
 
 export default function Page() {
   const [ready, setReady] = useState(false);
