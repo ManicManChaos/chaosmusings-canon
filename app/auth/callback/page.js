@@ -1,13 +1,13 @@
-// app/auth/callback/page.js
 "use client";
 
-import { Suspense, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 
 function CallbackInner() {
   const params = useSearchParams();
   const router = useRouter();
+  const [msg, setMsg] = useState("FINALIZING…");
 
   useEffect(() => {
     let alive = true;
@@ -24,16 +24,19 @@ function CallbackInner() {
         const { error: exErr } = await supabase.auth.exchangeCodeForSession(code);
         if (exErr) throw exErr;
 
-        if (!alive) return;
+        // mark arrival for OpeningBook state-3
+        try {
+          localStorage.setItem("mmoc_gate_state", "arrival");
+        } catch {}
 
-        // Return to app landing (Daily Hub)
+        if (!alive) return;
+        setMsg("WELCOME BACK…");
         router.replace("/#today");
       } catch (e) {
         console.error("[auth/callback]", e);
         if (!alive) return;
-
-        // Fail safe back to home
-        router.replace("/");
+        setMsg("AUTH FAILED. RETURNING…");
+        setTimeout(() => router.replace("/"), 900);
       }
     };
 
@@ -43,7 +46,11 @@ function CallbackInner() {
     };
   }, [params, router]);
 
-  return null;
+  return (
+    <div className="callbackFrame">
+      <div className="callbackMsg">{msg}</div>
+    </div>
+  );
 }
 
 export default function CallbackPage() {
