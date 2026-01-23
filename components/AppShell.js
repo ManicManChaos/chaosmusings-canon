@@ -1,0 +1,140 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import Sidebar from "./Sidebar";
+import Weave from "./Weave";
+import OpeningFlow from "./OpeningFlow";
+
+import DailyHubView from "./DailyHubView";
+import IntakeView from "./IntakeView";
+import RoidBoyView from "./RoidBoyView";
+import MomentsView from "./MomentsView";
+import PSView from "./PSView";
+import SummationView from "./SummationView";
+import YearReviewView from "./YearReviewView";
+import LibraryView from "./LibraryView";
+import SealView from "./SealView";
+
+import { getTodayISO, loadDay, ensureDay, saveDayPartial } from "@/lib/mmocStore";
+
+const VIEW_ORDER = [
+  "today",
+  "intake",
+  "roidboy",
+  "moments",
+  "ps",
+  "summation",
+  "yearreview",
+  "seal",
+  "library"
+];
+
+export default function AppShell() {
+  const [openingDone, setOpeningDone] = useState(false);
+  const [active, setActive] = useState("today");
+  const [weaving, setWeaving] = useState(false);
+
+  const [dayISO, setDayISO] = useState(getTodayISO());
+  const [day, setDay] = useState(() => ensureDay(loadDay(getTodayISO()), getTodayISO()));
+
+  // Load day on mount + when dayISO changes
+  useEffect(() => {
+    const next = ensureDay(loadDay(dayISO), dayISO);
+    setDay(next);
+  }, [dayISO]);
+
+  const nav = useMemo(() => (id) => {
+    const next = VIEW_ORDER.includes(id) ? id : "today";
+    setWeaving(true);
+    window.setTimeout(() => {
+      setActive(next);
+      setWeaving(false);
+      // keep hash routing lightweight for long-term stability
+      try {
+        const desired = `#${next}`;
+        if (window.location.hash !== desired) window.history.replaceState(null, "", desired);
+      } catch {}
+    }, 520);
+  }, []);
+
+  // Allow direct hash routing
+  useEffect(() => {
+    const applyHash = () => {
+      const raw = (window.location.hash || "").replace("#", "").trim();
+      if (!raw) return;
+      if (!VIEW_ORDER.includes(raw)) return;
+      setActive(raw);
+    };
+    applyHash();
+    window.addEventListener("hashchange", applyHash);
+    return () => window.removeEventListener("hashchange", applyHash);
+  }, []);
+
+  const patchDay = (partial) => {
+    setDay((prev) => {
+      const merged = { ...prev, ...partial };
+      saveDayPartial(dayISO, partial);
+      return merged;
+    });
+  };
+
+  const headerDate = useMemo(() => {
+    const d = new Date(dayISO + "T00:00:00");
+    return d.toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric" }).toUpperCase();
+  }, [dayISO]);
+
+  if (!openingDone) {
+    return <OpeningFlow onDone={() => setOpeningDone(true)} />;
+  }
+
+  return (
+    <div className="appRoot">
+      <Sidebar active={active} onSelect={nav} />
+
+      <header className="topbar">
+        <div className="brandTitle">TELL NO LIES</div>
+        <div className="chip">{headerDate}</div>
+      </header>
+
+      <main className="mainStage">
+        {active === "today" ? (
+          <DailyHubView dayISO={dayISO} day={day} onPatch={patchDay} onGo={nav} />
+        ) : null}
+
+        {active === "intake" ? (
+          <IntakeView dayISO={dayISO} day={day} onPatch={patchDay} />
+        ) : null}
+
+        {active === "roidboy" ? (
+          <RoidBoyView dayISO={dayISO} day={day} onPatch={patchDay} />
+        ) : null}
+
+        {active === "moments" ? (
+          <MomentsView dayISO={dayISO} day={day} onPatch={patchDay} />
+        ) : null}
+
+        {active === "ps" ? (
+          <PSView dayISO={dayISO} day={day} onPatch={patchDay} />
+        ) : null}
+
+        {active === "summation" ? (
+          <SummationView dayISO={dayISO} day={day} onPatch={patchDay} />
+        ) : null}
+
+        {active === "yearreview" ? (
+          <YearReviewView />
+        ) : null}
+
+        {active === "seal" ? (
+          <SealView dayISO={dayISO} day={day} onPatch={patchDay} />
+        ) : null}
+
+        {active === "library" ? (
+          <LibraryView onOpenDate={(iso) => setDayISO(iso)} onGo={nav} />
+        ) : null}
+      </main>
+
+      {weaving ? <Weave /> : null}
+    </div>
+  );
+}
