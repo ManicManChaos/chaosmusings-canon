@@ -9,18 +9,19 @@ import { supabase } from "@/lib/supabaseClient";
  * Stage 2: auth image (shown while OAuth happens)
  * Stage 3: arrival image (brief, then unlock app)
  *
- * IMPORTANT:
+ * Fixes:
  * - Hotspot is ALWAYS above image (z-index).
+ * - Image can NEVER steal taps (pointer-events: none).
  * - Supports BOTH filename sets:
  *   /flow/stage-1-opening.png OR /flow/state-1-center.jpeg
- * - iPad tap-safe (touchAction + pointerEvents).
+ * - iPad tap-safe (touchAction + bigger hotspot).
  */
 export default function OpeningFlow({ onDone }) {
   const [stage, setStage] = useState(1); // 1 | 2 | 3
   const [busy, setBusy] = useState(false);
   const doneOnce = useRef(false);
 
-  // Try canonical filenames first, then fall back to the "state-*" names.
+  // Try canonical names first, then fall back to your "state-*" names
   const images = useMemo(
     () => ({
       1: ["/flow/stage-1-opening.png", "/flow/state-1-center.jpeg", "/flow/state-1-opening.jpeg"],
@@ -41,7 +42,6 @@ export default function OpeningFlow({ onDone }) {
 
   const goArrivalThenFinish = () => {
     setStage(3);
-    // swap src to stage 3 (with fallback logic)
     triedRef.current[3] = 0;
     setSrc(images[3][0]);
     window.setTimeout(() => finish(), 650);
@@ -52,7 +52,7 @@ export default function OpeningFlow({ onDone }) {
 
     const boot = async () => {
       try {
-        // set stage 1 image on mount
+        // ensure stage 1 image on mount
         triedRef.current[1] = 0;
         setSrc(images[1][0]);
         setStage(1);
@@ -60,12 +60,9 @@ export default function OpeningFlow({ onDone }) {
         const { data } = await supabase.auth.getSession();
         if (!alive) return;
 
-        // Already authed → arrival → done
-        if (data?.session) {
-          goArrivalThenFinish();
-        }
+        // If already authed, skip to arrival
+        if (data?.session) goArrivalThenFinish();
       } catch {
-        // stay on stage 1
         if (!alive) return;
         setStage(1);
       }
@@ -101,7 +98,7 @@ export default function OpeningFlow({ onDone }) {
           ? window.location.origin
           : "https://chaosmusings.app";
 
-      // MUST come back to your app domain
+      // MUST return to your app domain
       const redirectTo = `${origin}/auth/callback`;
 
       const { error } = await supabase.auth.signInWithOAuth({
@@ -109,8 +106,7 @@ export default function OpeningFlow({ onDone }) {
         options: { redirectTo },
       });
 
-      // signInWithOAuth should redirect away.
-      // If it does not (error), restore stage 1.
+      // signInWithOAuth should redirect away; if it doesn't, revert to stage 1
       if (error) {
         setBusy(false);
         setStage(1);
@@ -126,17 +122,18 @@ export default function OpeningFlow({ onDone }) {
   };
 
   const onImgError = () => {
-    // Fallback to next candidate filename for the current stage
+    // fall back to next candidate filename for current stage
     const idx = triedRef.current[stage] ?? 0;
     const nextIdx = idx + 1;
     const list = images[stage] || [];
+
     if (nextIdx < list.length) {
       triedRef.current[stage] = nextIdx;
       setSrc(list[nextIdx]);
       return;
     }
 
-    // If all fail, keep stage 1 with first candidate (avoids blank loop)
+    // all failed → safe return to stage 1
     triedRef.current[1] = 0;
     setStage(1);
     setBusy(false);
@@ -145,15 +142,9 @@ export default function OpeningFlow({ onDone }) {
 
   return (
     <div style={S.wrap} aria-label="Opening">
-      <img
-        src={src}
-        alt=""
-        draggable={false}
-        style={S.bg}
-        onError={onImgError}
-      />
+      <img src={src} alt="" draggable={false} style={S.bg} onError={onImgError} />
 
-      {/* Stage 1: Sigil hotspot ONLY (no text). Always on top. */}
+      {/* Stage 1: invisible sigil hotspot ONLY (no text) */}
       {stage === 1 ? (
         <button
           type="button"
@@ -190,17 +181,16 @@ const S = {
     objectPosition: "center",
     transform: "translateZ(0)",
     zIndex: 1,
-    pointerEvents: "none", // IMPORTANT: image can never steal the tap
+    pointerEvents: "none", // CRITICAL: image can never steal the tap
   },
 
-  // Invisible-but-clickable sigil zone
-  // NOTE: moved lower than center to match "sigil at waist" doctrine.
-  // Adjust top/size ONLY if needed.
+  // Invisible clickable zone.
+  // If sigil is slightly off, adjust ONLY top/size here.
   sigilBtn: {
     position: "absolute",
     left: "50%",
-    top: "60%", // was 50% — moved down for waist placement
-    width: "150px", // slightly larger for iPad tap reliability
+    top: "60%", // waist placement
+    width: "150px",
     height: "150px",
     transform: "translate(-50%, -50%)",
     borderRadius: "999px",
