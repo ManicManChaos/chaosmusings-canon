@@ -1,4 +1,4 @@
-# Manic Musings of Chaos (Cannon Reset)
+# Manic Musings of Chaos (Cannon)
 
 This repo is a **clean-slate rebuild** of the MMOC frontend with the canon visual system (green-black + nude-pink + true gold) and a locked, minimal routing/auth surface.
 
