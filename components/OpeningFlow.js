@@ -1,30 +1,20 @@
 // components/OpeningFlow.js
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { useEffect, useRef, useState } from "react";
 
 /**
- * Canon Opening Flow (LOCKED)
- * Stage 1: /flow/stage-1-opening.png  (sigil press triggers GitHub OAuth)
- * Stage 2: /flow/stage-2-auth.png     (shown while OAuth happens)
- * Stage 3: /flow/stage-3-arrival.png  (brief arrival, then unlock app)
+ * Simplified Opening Flow (TEMP LOCK FOR DELIVERY):
+ * Stage 1: /flow/stage-1-opening.png (tap sigil)
+ * Stage 2: /flow/stage-2-auth.png    (brief hold)
+ * then onDone() -> hub
  *
- * No helper text. iPad-first. No layout drift.
+ * No Supabase. No OAuth. No callback. No weave.
  */
 export default function OpeningFlow({ onDone }) {
-  const [stage, setStage] = useState(1); // 1 | 2 | 3
+  const [stage, setStage] = useState(1); // 1 | 2
   const [busy, setBusy] = useState(false);
   const doneOnce = useRef(false);
-
-  const images = useMemo(
-    () => ({
-      1: "/flow/stage-1-opening.png",
-      2: "/flow/stage-2-auth.png",
-      3: "/flow/stage-3-arrival.png",
-    }),
-    []
-  );
 
   const finish = () => {
     if (doneOnce.current) return;
@@ -32,101 +22,41 @@ export default function OpeningFlow({ onDone }) {
     onDone?.();
   };
 
-  const goArrivalThenFinish = () => {
-    setStage(3);
-    window.setTimeout(() => finish(), 650);
-  };
-
-  useEffect(() => {
-    let alive = true;
-
-    const boot = async () => {
-      try {
-        const { data } = await supabase.auth.getSession();
-        if (!alive) return;
-
-        if (data?.session) {
-          goArrivalThenFinish();
-        } else {
-          setStage(1);
-        }
-      } catch {
-        if (!alive) return;
-        setStage(1);
-      }
-    };
-
-    boot();
-
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!alive) return;
-      if (session) goArrivalThenFinish();
-    });
-
-    return () => {
-      alive = false;
-      sub?.subscription?.unsubscribe?.();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const startGithub = async () => {
+  const go = () => {
     if (busy) return;
     setBusy(true);
     setStage(2);
-
-    try {
-      const origin =
-        typeof window !== "undefined" && window.location?.origin
-          ? window.location.origin
-          : "https://chaosmusings.app";
-
-      // MUST return to the app domain:
-      const redirectTo = `${origin}/auth/callback`;
-
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "github",
-        options: { redirectTo },
-      });
-
-      // signInWithOAuth should redirect away. If it doesn't:
-      if (error) {
-        setBusy(false);
-        setStage(1);
-      }
-    } catch {
-      setBusy(false);
-      setStage(1);
-    }
+    window.setTimeout(() => finish(), 650);
   };
+
+  // Safety: if stage 2 image fails to load, still enter hub
+  useEffect(() => {
+    if (stage === 2) {
+      const t = window.setTimeout(() => finish(), 1100);
+      return () => window.clearTimeout(t);
+    }
+  }, [stage]);
 
   return (
     <div style={S.wrap} aria-label="Opening">
       <img
-        key={stage}
-        src={images[stage]}
+        src={stage === 1 ? "/flow/stage-1-opening.png" : "/flow/stage-2-auth.png"}
         alt=""
         draggable={false}
         style={S.bg}
         onError={() => {
-          // If the image path is wrong, fall back safely to stage 1.
-          setBusy(false);
-          setStage(1);
+          // If paths are wrong, do NOT trap you on opening.
+          finish();
         }}
       />
 
-      {/* Stage 1: Invisible sigil hotspot (MUST be above image) */}
+      {/* Stage 1: sigil hotspot */}
       {stage === 1 ? (
         <button
           type="button"
-          onClick={startGithub}
-          disabled={busy}
+          onClick={go}
           aria-label="Enter"
-          style={{
-            ...S.sigilBtn,
-            opacity: busy ? 0.6 : 1,
-            pointerEvents: busy ? "none" : "auto",
-          }}
+          style={S.sigilBtn}
         />
       ) : null}
     </div>
@@ -143,7 +73,6 @@ const S = {
     WebkitTapHighlightColor: "transparent",
     userSelect: "none",
   },
-
   bg: {
     position: "absolute",
     inset: 0,
@@ -154,15 +83,12 @@ const S = {
     transform: "translateZ(0)",
     zIndex: 1,
   },
-
-  // Invisible but clickable sigil zone centered.
-  // (If you want it bigger/smaller later, ONLY change width/height.)
   sigilBtn: {
     position: "absolute",
     left: "50%",
     top: "50%",
-    width: "150px",
-    height: "150px",
+    width: "170px",
+    height: "170px",
     transform: "translate(-50%, -50%)",
     borderRadius: "999px",
     border: "0",
