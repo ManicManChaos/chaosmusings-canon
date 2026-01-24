@@ -18,8 +18,7 @@ import SealView from "./SealView";
 import { getTodayISO, loadDay, ensureDay, saveDayPartial } from "@/lib/mmocStore";
 
 /**
- * LOCKED sidebar order (your approved order) + library as a separate access glyph (directory).
- *
+ * LOCKED
  * Sidebar order:
  *  - today (daily hub)
  *  - intake
@@ -33,7 +32,8 @@ import { getTodayISO, loadDay, ensureDay, saveDayPartial } from "@/lib/mmocStore
  * Library access:
  *  - via DIRECTORY glyph in topbar (not a sidebar item)
  */
-const VIEW_ORDER = [
+
+const ROUTES = [
   "today",
   "intake",
   "roidboy",
@@ -42,7 +42,7 @@ const VIEW_ORDER = [
   "summation",
   "yearreview",
   "seal",
-  "library"
+  "library" // route exists, but NOT in Sidebar list
 ];
 
 export default function AppShell() {
@@ -53,7 +53,6 @@ export default function AppShell() {
   const [dayISO, setDayISO] = useState(getTodayISO());
   const [day, setDay] = useState(() => ensureDay(loadDay(getTodayISO()), getTodayISO()));
 
-  // Load day on mount + when dayISO changes
   useEffect(() => {
     const next = ensureDay(loadDay(dayISO), dayISO);
     setDay(next);
@@ -61,7 +60,8 @@ export default function AppShell() {
 
   const nav = useMemo(
     () => (id) => {
-      const next = VIEW_ORDER.includes(id) ? id : "today";
+      const next = ROUTES.includes(id) ? id : "today";
+
       setWeaving(true);
       window.setTimeout(() => {
         setActive(next);
@@ -75,14 +75,14 @@ export default function AppShell() {
     []
   );
 
-  // Allow direct hash routing
   useEffect(() => {
     const applyHash = () => {
       const raw = (window.location.hash || "").replace("#", "").trim();
       if (!raw) return;
-      if (!VIEW_ORDER.includes(raw)) return;
+      if (!ROUTES.includes(raw)) return;
       setActive(raw);
     };
+
     applyHash();
     window.addEventListener("hashchange", applyHash);
     return () => window.removeEventListener("hashchange", applyHash);
@@ -112,12 +112,23 @@ export default function AppShell() {
       <Sidebar active={active} onSelect={nav} />
 
       <header className="topbar">
+        {/* LEFT: Return to hub (EYE glyph only) */}
+        <button
+          type="button"
+          className="glyphBtn"
+          aria-label="Go to Daily Hub"
+          onClick={() => nav("today")}
+        >
+          <img className="glyphImg" src="/ui/glyphs/sigil-eye.svg" alt="" />
+        </button>
+
+        {/* CENTER: Title */}
         <div className="brandTitle">TELL NO LIES</div>
 
+        {/* RIGHT: Date + Directory (Library) */}
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div className="chip">{headerDate}</div>
 
-          {/* DIRECTORY → Library (glyph only, no text) */}
           <button
             type="button"
             className="glyphBtn"
