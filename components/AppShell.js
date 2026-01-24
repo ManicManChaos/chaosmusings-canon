@@ -18,8 +18,7 @@ import SealView from "./SealView";
 import { getTodayISO, loadDay, ensureDay, saveDayPartial } from "@/lib/mmocStore";
 
 /**
- * LOCKED
- * Sidebar order:
+ * LOCKED sidebar order:
  *  - today (daily hub)
  *  - intake
  *  - roidboy
@@ -32,18 +31,7 @@ import { getTodayISO, loadDay, ensureDay, saveDayPartial } from "@/lib/mmocStore
  * Library access:
  *  - via DIRECTORY glyph in topbar (not a sidebar item)
  */
-
-const ROUTES = [
-  "today",
-  "intake",
-  "roidboy",
-  "moments",
-  "ps",
-  "summation",
-  "yearreview",
-  "seal",
-  "library" // route exists, but NOT in Sidebar list
-];
+const VIEW_ORDER = ["today", "intake", "roidboy", "moments", "ps", "summation", "yearreview", "seal", "library"];
 
 export default function AppShell() {
   const [openingDone, setOpeningDone] = useState(false);
@@ -60,8 +48,7 @@ export default function AppShell() {
 
   const nav = useMemo(
     () => (id) => {
-      const next = ROUTES.includes(id) ? id : "today";
-
+      const next = VIEW_ORDER.includes(id) ? id : "today";
       setWeaving(true);
       window.setTimeout(() => {
         setActive(next);
@@ -79,10 +66,9 @@ export default function AppShell() {
     const applyHash = () => {
       const raw = (window.location.hash || "").replace("#", "").trim();
       if (!raw) return;
-      if (!ROUTES.includes(raw)) return;
+      if (!VIEW_ORDER.includes(raw)) return;
       setActive(raw);
     };
-
     applyHash();
     window.addEventListener("hashchange", applyHash);
     return () => window.removeEventListener("hashchange", applyHash);
@@ -98,9 +84,7 @@ export default function AppShell() {
 
   const headerDate = useMemo(() => {
     const d = new Date(dayISO + "T00:00:00");
-    return d
-      .toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric" })
-      .toUpperCase();
+    return d.toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric" }).toUpperCase();
   }, [dayISO]);
 
   if (!openingDone) {
@@ -112,66 +96,33 @@ export default function AppShell() {
       <Sidebar active={active} onSelect={nav} />
 
       <header className="topbar">
-        {/* LEFT: Return to hub (EYE glyph only) */}
-        <button
-          type="button"
-          className="glyphBtn"
-          aria-label="Go to Daily Hub"
-          onClick={() => nav("today")}
-        >
-          <img className="glyphImg" src="/ui/glyphs/sigil-eye.svg" alt="" />
-        </button>
+        {/* LEFT: empty spacer (keeps title centered) */}
+        <div style={{ width: 44, height: 44 }} />
 
-        {/* CENTER: Title */}
-        <div className="brandTitle">TELL NO LIES</div>
+        {/* CENTER: title */}
+        <div className="brandTitle" style={{ textAlign: "center" }}>
+          TELL NO LIES
+        </div>
 
-        {/* RIGHT: Date + Directory (Library) */}
+        {/* RIGHT: date + directory glyph */}
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div className="chip">{headerDate}</div>
 
-          <button
-            type="button"
-            className="glyphBtn"
-            aria-label="Open Library"
-            onClick={() => nav("library")}
-          >
+          <button type="button" className="glyphBtn" aria-label="Open Library" onClick={() => nav("library")}>
             <img className="glyphImg" src="/ui/glyphs/directory.svg" alt="" />
           </button>
         </div>
       </header>
 
       <main className="mainStage">
-        {active === "today" ? (
-          <DailyHubView data={day} onPatch={patchDay} onGo={nav} />
-        ) : null}
-
-        {active === "intake" ? (
-          <IntakeView dayISO={dayISO} day={day} onPatch={patchDay} />
-        ) : null}
-
-        {active === "roidboy" ? (
-          <RoidBoyView dayISO={dayISO} day={day} onPatch={patchDay} />
-        ) : null}
-
-        {active === "moments" ? (
-          <MomentsView dayISO={dayISO} day={day} onPatch={patchDay} />
-        ) : null}
-
-        {active === "ps" ? (
-          <PSView dayISO={dayISO} day={day} onPatch={patchDay} />
-        ) : null}
-
-        {active === "summation" ? (
-          <SummationView dayISO={dayISO} day={day} onPatch={patchDay} />
-        ) : null}
-
-        {active === "yearreview" ? (
-          <YearReviewView dayISO={dayISO} day={day} onPatch={patchDay} />
-        ) : null}
-
-        {active === "seal" ? (
-          <SealView dayISO={dayISO} day={day} onPatch={patchDay} />
-        ) : null}
+        {active === "today" ? <DailyHubView data={day} onPatch={patchDay} onGo={nav} /> : null}
+        {active === "intake" ? <IntakeView dayISO={dayISO} day={day} onPatch={patchDay} /> : null}
+        {active === "roidboy" ? <RoidBoyView dayISO={dayISO} day={day} onPatch={patchDay} /> : null}
+        {active === "moments" ? <MomentsView dayISO={dayISO} day={day} onPatch={patchDay} /> : null}
+        {active === "ps" ? <PSView dayISO={dayISO} day={day} onPatch={patchDay} /> : null}
+        {active === "summation" ? <SummationView dayISO={dayISO} day={day} onPatch={patchDay} /> : null}
+        {active === "yearreview" ? <YearReviewView dayISO={dayISO} day={day} onPatch={patchDay} /> : null}
+        {active === "seal" ? <SealView dayISO={dayISO} day={day} onPatch={patchDay} /> : null}
 
         {active === "library" ? (
           <LibraryView
