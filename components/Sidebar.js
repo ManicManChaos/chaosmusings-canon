@@ -2,25 +2,30 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 
+/**
+ * LOCKED Sidebar list (NO Library here).
+ * Swipe open from RIGHT EDGE hotzone.
+ */
 const NAV = [
-  { id: "today", glyph: "/ui/glyphs/eye.svg" },
+  { id: "today", glyph: "/ui/glyphs/sigil-eye.svg" },
   { id: "intake", glyph: "/ui/glyphs/intake.svg" },
   { id: "roidboy", glyph: "/ui/glyphs/roidboy.svg" },
   { id: "moments", glyph: "/ui/glyphs/moments.svg" },
   { id: "ps", glyph: "/ui/glyphs/ps.svg" },
   { id: "summation", glyph: "/ui/glyphs/summation.svg" },
-  { id: "yearreview", glyph: "/ui/glyphs/year.svg" },
-  { id: "seal", glyph: "/ui/glyphs/seal.svg" },
-  { id: "library", glyph: "/ui/glyphs/library.svg" }
+  { id: "yearreview", glyph: "/ui/glyphs/year-review.svg" },
+  { id: "seal", glyph: "/ui/glyphs/seal.svg" }
 ];
 
 export default function Sidebar({ active, onSelect }) {
   const [open, setOpen] = useState(false);
   const start = useRef({ x: 0, y: 0, tracking: false });
 
+  const items = useMemo(() => NAV, []);
   const close = () => setOpen(false);
   const toggle = (v) => setOpen(!!v);
 
+  // RIGHT EDGE swipe opens (bottom-right doctrine supported)
   useEffect(() => {
     const hot = document.getElementById("rightHotzone");
     if (!hot) return;
@@ -53,8 +58,6 @@ export default function Sidebar({ active, onSelect }) {
       hot.removeEventListener("touchend", onEnd);
     };
   }, []);
-
-  const items = useMemo(() => NAV, []);
 
   return (
     <>
