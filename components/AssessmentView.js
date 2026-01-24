@@ -1,14 +1,6 @@
 "use client";
 
-/**
- * AssessmentView (LOCKED)
- * - Controlled component: value + onChange
- * - Labels-only doctrine: NO helper text, NO placeholders, NO extra titles
- * - Layout:
- *   - Title (center top)
- *   - Left column: Head Hummer / Mood / Era
- *   - Right column: Location / Word of the Day / Singleness Level
- */
+/* ===== APPROVED LOCKED LISTS ===== */
 
 const MOODS = [
   "Horny for Peace",
@@ -92,7 +84,7 @@ const ERAS = [
   "Knowing Exactly Who I Am"
 ];
 
-const SINGLES = [
+const SINGLE = [
   "Single and Self-Controlled",
   "Single, Not Looking",
   "Single but Curious",
@@ -112,102 +104,81 @@ const SINGLES = [
   "Choosing Myself"
 ];
 
+/* ===== COMPONENT ===== */
+
 export default function AssessmentView({ value, onChange }) {
   const v = value || {};
-  const set = (patch) => onChange?.({ ...v, ...patch });
+  const set = (p) => onChange?.({ ...v, ...p });
 
   return (
-    <div>
-      {/* TITLE (CENTER TOP) */}
+    <div className="assessment">
+
+      {/* TITLE — top / centered */}
       <div className="titleRow">
-        <div className="field" style={{ marginTop: 0 }}>
-          <label>TITLE OF THE DAY</label>
-          <input
-            className="titleInput"
-            value={v.title || ""}
-            onChange={(e) => set({ title: e.target.value })}
-            inputMode="text"
-            autoCapitalize="characters"
-            autoCorrect="off"
-          />
-        </div>
+        <input
+          className="titleInput"
+          value={v.title || ""}
+          onChange={(e) => set({ title: e.target.value })}
+        />
       </div>
 
-      {/* TWO COLUMNS: LEFT vs RIGHT (LOCKED ORDER) */}
-      <div
-        className="grid2"
-        style={{
-          gridTemplateColumns: "1fr 1fr",
-          alignItems: "start"
-        }}
-      >
-        {/* LEFT COLUMN */}
-        <div className="field" style={{ gridColumn: "1 / 2" }}>
+      {/* GRID */}
+      <div className="grid2">
+
+        <div className="field">
           <label>HEAD HUMMER</label>
           <input
             value={v.headHummer || ""}
             onChange={(e) => set({ headHummer: e.target.value })}
-            inputMode="text"
-            autoCorrect="off"
           />
         </div>
 
-        {/* RIGHT COLUMN */}
-        <div className="field" style={{ gridColumn: "2 / 3" }}>
+        <div className="field">
           <label>LOCATION</label>
           <input
             value={v.location || ""}
             onChange={(e) => set({ location: e.target.value })}
-            inputMode="text"
-            autoCorrect="off"
           />
         </div>
 
-        <div className="field" style={{ gridColumn: "1 / 2" }}>
+        <div className="field">
           <label>MOOD</label>
           <select value={v.mood || ""} onChange={(e) => set({ mood: e.target.value })}>
-            <option value="">SELECT…</option>
+            <option value="" />
             {MOODS.map((m) => (
-              <option key={m} value={m}>
-                {m.toUpperCase()}
-              </option>
+              <option key={m} value={m}>{m}</option>
             ))}
           </select>
         </div>
 
-        <div className="field" style={{ gridColumn: "2 / 3" }}>
+        <div className="field">
           <label>WORD OF THE DAY</label>
           <input
             value={v.wordOfDay || ""}
             onChange={(e) => set({ wordOfDay: e.target.value })}
-            inputMode="text"
-            autoCorrect="off"
           />
         </div>
 
-        <div className="field" style={{ gridColumn: "1 / 2" }}>
+        <div className="field">
           <label>ERA</label>
           <select value={v.era || ""} onChange={(e) => set({ era: e.target.value })}>
-            <option value="">SELECT…</option>
-            {ERAS.map((m) => (
-              <option key={m} value={m}>
-                {m.toUpperCase()}
-              </option>
+            <option value="" />
+            {ERAS.map((e) => (
+              <option key={e} value={e}>{e}</option>
             ))}
           </select>
         </div>
 
-        <div className="field" style={{ gridColumn: "2 / 3" }}>
+        <div className="field">
           <label>SINGLENESS LEVEL</label>
           <select value={v.single || ""} onChange={(e) => set({ single: e.target.value })}>
-            <option value="">SELECT…</option>
-            {SINGLES.map((m) => (
-              <option key={m} value={m}>
-                {m.toUpperCase()}
-              </option>
+            <option value="" />
+            {SINGLE.map((s) => (
+              <option key={s} value={s}>{s}</option>
             ))}
           </select>
         </div>
+
       </div>
     </div>
   );
