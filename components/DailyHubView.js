@@ -7,18 +7,22 @@ import AssessmentView from "@/components/AssessmentView";
  * DailyHubView (LOCKED)
  * Permanent visible:
  *  - Assessment (inputs)
- *  - Intake progress bars (READ-ONLY snapshot)
+ *  - Intake progress bars (READ-ONLY snapshot)  ← NO numbers, no helper text
  *
  * NOT visible unless filled:
  *  - Context (only appears if any context exists)
  *  - Summation (only appears if any summation exists)
  *
- * No helper text. No extra titles.
+ * Text doctrine:
+ *  - ONLY field/section labels (e.g., MOOD / ERA / etc.)
+ *  - NO helper text
+ *  - NO totals text like "120/180"
+ *  - Glyphs are the navigation language
  *
  * Props:
  *  - data: full app day state object (today)
- *  - onPatch: (partial) => void   // updates today state
- *  - onGo: (routeId) => void      // open a section via sidebar navigation
+ *  - onPatch: (partial) => void
+ *  - onGo: (routeId) => void
  */
 export default function DailyHubView({ data, onPatch, onGo }) {
   const d = data || {};
@@ -59,7 +63,6 @@ export default function DailyHubView({ data, onPatch, onGo }) {
   const hasSummation = !!(summation && (summation.text || summation.close || summation.sealNote));
 
   // Ornate divider sources (LOCKED PATHS)
-  // These must exist in /public exactly. If your folder is different, change ONLY these constants.
   const ORNATE_ASSESS = "/ui/ornate/ornate-assessment.png";
   const ORNATE_INTAKE = "/ui/ornate/ornate-intake.png";
   const ORNATE_CONTEXT = "/ui/ornate/ornate-context.png";
@@ -72,12 +75,7 @@ export default function DailyHubView({ data, onPatch, onGo }) {
       <div className="zone">
         <div className="zoneHead">
           <div className="floatTools">
-            <button
-              type="button"
-              className="glyphBtn"
-              aria-label="Go to Daily Hub"
-              onClick={() => onGo?.("today")}
-            >
+            <button type="button" className="glyphBtn" aria-label="Daily Hub" onClick={() => onGo?.("today")}>
               <img className="glyphImg" src="/ui/glyphs/sigil-eye.svg" alt="" />
             </button>
           </div>
@@ -93,48 +91,18 @@ export default function DailyHubView({ data, onPatch, onGo }) {
       <div className="zone">
         <div className="zoneHead">
           <div className="floatTools">
-            <button
-              type="button"
-              className="glyphBtn"
-              aria-label="Open Intake"
-              onClick={() => onGo?.("intake")}
-            >
+            <button type="button" className="glyphBtn" aria-label="Intake" onClick={() => onGo?.("intake")}>
               <img className="glyphImg" src="/ui/glyphs/intake.svg" alt="" />
             </button>
           </div>
         </div>
 
         <div className="view" style={{ paddingTop: 10 }}>
-          <BarRow
-            label="CALORIES"
-            value={totals.calories}
-            goal={goals.calories}
-            percent={pct(totals.calories, goals.calories)}
-          />
-          <BarRow
-            label="PROTEIN (G)"
-            value={totals.proteinG}
-            goal={goals.proteinG}
-            percent={pct(totals.proteinG, goals.proteinG)}
-          />
-          <BarRow
-            label="CARBS (G)"
-            value={totals.carbsG}
-            goal={goals.carbsG}
-            percent={pct(totals.carbsG, goals.carbsG)}
-          />
-          <BarRow
-            label="FAT (G)"
-            value={totals.fatG}
-            goal={goals.fatG}
-            percent={pct(totals.fatG, goals.fatG)}
-          />
-          <BarRow
-            label="WATER (OZ)"
-            value={totals.waterOz}
-            goal={goals.waterOz}
-            percent={pct(totals.waterOz, goals.waterOz)}
-          />
+          <BarRow label="CALORIES" percent={pct(totals.calories, goals.calories)} />
+          <BarRow label="PROTEIN (G)" percent={pct(totals.proteinG, goals.proteinG)} />
+          <BarRow label="CARBS (G)" percent={pct(totals.carbsG, goals.carbsG)} />
+          <BarRow label="FAT (G)" percent={pct(totals.fatG, goals.fatG)} />
+          <BarRow label="WATER (OZ)" percent={pct(totals.waterOz, goals.waterOz)} />
         </div>
       </div>
 
@@ -145,41 +113,26 @@ export default function DailyHubView({ data, onPatch, onGo }) {
           <div className="zone">
             <div className="zoneHead">
               <div className="floatTools">
-                <button
-                  type="button"
-                  className="glyphBtn"
-                  aria-label="Open Moments"
-                  onClick={() => onGo?.("moments")}
-                >
+                <button type="button" className="glyphBtn" aria-label="Moments" onClick={() => onGo?.("moments")}>
                   <img className="glyphImg" src="/ui/glyphs/moments.svg" alt="" />
                 </button>
 
-                <button
-                  type="button"
-                  className="glyphBtn"
-                  aria-label="Open Roid Boy"
-                  onClick={() => onGo?.("roidboy")}
-                >
+                <button type="button" className="glyphBtn" aria-label="Roid Boy" onClick={() => onGo?.("roidboy")}>
                   <img className="glyphImg" src="/ui/glyphs/roidboy.svg" alt="" />
                 </button>
 
-                <button
-                  type="button"
-                  className="glyphBtn"
-                  aria-label="Open P.S."
-                  onClick={() => onGo?.("ps")}
-                >
+                <button type="button" className="glyphBtn" aria-label="P.S." onClick={() => onGo?.("ps")}>
                   <img className="glyphImg" src="/ui/glyphs/ps.svg" alt="" />
                 </button>
               </div>
             </div>
 
-            {/* Context on hub is DISPLAY ONLY. No helper text. */}
+            {/* Context on hub is DISPLAY ONLY. No text. */}
             <div className="view">
               <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
-                {moments.length ? <MiniCount glyph="/ui/glyphs/moments.svg" count={moments.length} /> : null}
+                {moments.length ? <MiniDot glyph="/ui/glyphs/moments.svg" /> : null}
                 {hasRoidboy ? <MiniDot glyph="/ui/glyphs/roidboy.svg" /> : null}
-                {ps.length ? <MiniCount glyph="/ui/glyphs/ps.svg" count={ps.length} /> : null}
+                {ps.length ? <MiniDot glyph="/ui/glyphs/ps.svg" /> : null}
               </div>
             </div>
           </div>
@@ -193,18 +146,13 @@ export default function DailyHubView({ data, onPatch, onGo }) {
           <div className="zone">
             <div className="zoneHead">
               <div className="floatTools">
-                <button
-                  type="button"
-                  className="glyphBtn"
-                  aria-label="Open Summation"
-                  onClick={() => onGo?.("summation")}
-                >
+                <button type="button" className="glyphBtn" aria-label="Summation" onClick={() => onGo?.("summation")}>
                   <img className="glyphImg" src="/ui/glyphs/summation.svg" alt="" />
                 </button>
               </div>
             </div>
 
-            {/* Summation on hub is DISPLAY ONLY. No helper text. */}
+            {/* Summation on hub is DISPLAY ONLY. No text. */}
             <div className="view">
               <MiniDot glyph="/ui/glyphs/summation.svg" />
             </div>
@@ -217,37 +165,17 @@ export default function DailyHubView({ data, onPatch, onGo }) {
 
 /* =========================
    Subcomponents (LOCKED)
-   No helper text.
-   Labels are allowed.
+   Labels-only doctrine.
    ========================= */
 
-function BarRow({ label, value, goal, percent }) {
-  const v = Number(value || 0);
-  const g = Number(goal || 0);
+function BarRow({ label, percent }) {
   const p = Number(percent || 0);
 
   return (
     <div style={{ marginBottom: 12 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "baseline" }}>
-        <label style={{ margin: 0 }}>{label}</label>
-        <div style={{ fontFamily: "var(--serif)", letterSpacing: ".14em", fontSize: 11, opacity: 0.75 }}>
-          {g > 0 ? `${v}/${g}` : `${v}`}
-        </div>
-      </div>
-
+      <label style={{ margin: 0 }}>{label}</label>
       <div className="bar" style={{ margin: "10px 0 0 0" }}>
         <div style={{ height: "100%", width: `${p}%`, background: "rgba(176,141,43,.45)" }} />
-      </div>
-    </div>
-  );
-}
-
-function MiniCount({ glyph, count }) {
-  return (
-    <div style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
-      <img className="glyphImg" src={glyph} alt="" style={{ width: 22, height: 22, opacity: 0.9 }} />
-      <div style={{ fontFamily: "var(--serif)", letterSpacing: ".18em", fontSize: 12, opacity: 0.8 }}>
-        {String(count)}
       </div>
     </div>
   );
