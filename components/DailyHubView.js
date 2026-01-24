@@ -1,127 +1,179 @@
 "use client";
 
-import AssessmentView from "./AssessmentView";
+import SectionMarker from "@/components/SectionMarker";
+import AssessmentView from "@/components/AssessmentView";
 
-const pct = (v, goal) => {
-  const n = Number(v || 0);
-  const g = Number(goal || 0);
-  if (!g) return 0;
-  return Math.max(0, Math.min(100, Math.round((n / g) * 100)));
-};
+/**
+ * DailyHub (LOCKED)
+ * Permanent visible:
+ *  - Assessment (inputs)
+ *  - Intake progress bars (READ-ONLY snapshot)
+ *
+ * NOT visible unless filled:
+ *  - Context (only appears if any context exists)
+ *  - Summation (only appears if any summation exists)
+ *
+ * No helper text. No extra titles.
+ *
+ * Props:
+ *  - data: full app day state object (today)
+ *  - onPatch: (partial) => void   // updates today state
+ *  - onGo: (routeId) => void      // open a section via sidebar navigation (intake/moments/roidboy/ps/summation/etc)
+ */
+export default function DailyHub({ data, onPatch, onGo }) {
+  const d = data || {};
+  const assessment = d.assessment || {};
 
-export default function DailyHubView({ dayISO, day, onPatch, onGo }) {
-  const intake = day?.intake || {};
-  const g = intake.macroGoal || {};
-  const meals = Array.isArray(intake.meals) ? intake.meals : [];
+  // Intake snapshot (progress only)
+  const intake = d.intake || {};
+  const goals = intake.goals || {}; // { calories, proteinG, carbsG, fatG, waterOz }
+  const totals = intake.totals || {}; // { calories, proteinG, carbsG, fatG, waterOz }
 
-  const totals = meals.reduce(
-    (acc, m) => {
-      const p = Number(m.protein || 0);
-      const c = Number(m.carbs || 0);
-      const f = Number(m.fats || 0);
-      const cal = Number(m.calories || 0);
-      return {
-        protein: acc.protein + (Number.isFinite(p) ? p : 0),
-        carbs: acc.carbs + (Number.isFinite(c) ? c : 0),
-        fats: acc.fats + (Number.isFinite(f) ? f : 0),
-        calories: acc.calories + (Number.isFinite(cal) ? cal : 0)
-      };
-    },
-    { protein: 0, carbs: 0, fats: 0, calories: 0 }
-  );
+  const pct = (v, g) => {
+    const goal = Number(g || 0);
+    const val = Number(v || 0);
+    if (!goal || goal <= 0) return 0;
+    return Math.max(0, Math.min(100, Math.round((val / goal) * 100)));
+  };
 
-  const momentsCount = Array.isArray(day?.moments) ? day.moments.length : 0;
-  const psCount = Array.isArray(day?.ps) ? day.ps.length : 0;
+  // Context appears ONLY if any context exists
+  const moments = Array.isArray(d.moments) ? d.moments : [];
+  const roidboy = d.roidboy || null;
+  const ps = Array.isArray(d.ps) ? d.ps : [];
+
+  const hasContext =
+    (moments && moments.length > 0) ||
+    !!(roidboy && (roidboy.mode || roidboy.gymLocation || roidboy.workoutType || (roidboy.exerciseLog || []).length)) ||
+    (ps && ps.length > 0);
+
+  // Summation appears ONLY if it has anything
+  const summation = d.summation || {};
+  const hasSummation =
+    !!(summation && (summation.text || summation.close || summation.sealNote));
+
+  // Ornate divider sources (LOCKED PATHS)
+  // Put your ornate PNGs here. If you only have one ornate file, reuse it for all.
+  const ORNATE_ASSESS = "/ui/ornate/ornate-assessment.png";
+  const ORNATE_INTAKE = "/ui/ornate/ornate-intake.png";
+  const ORNATE_CONTEXT = "/ui/ornate/ornate-context.png";
+  const ORNATE_SUMMATION = "/ui/ornate/ornate-summation.png";
 
   return (
-    <div className="container">
-      {/* Assessment block (permanent start-of-day) */}
-      <section className="card">
-        <div className="view">
-          <AssessmentView value={day?.assessment} onChange={(assessment) => onPatch({ assessment })} />
-        </div>
-      </section>
-
-      {/* Intake summary */}
-      <section className="card" style={{ marginTop: 12 }}>
-        <div className="view">
-          <div className="pageHeader">
-            <div className="pageTitle">INTAKE</div>
-            <button className="btn ghost" type="button" onClick={() => onGo?.("intake")}>
-              OPEN
-            </button>
-          </div>
-
-          <div className="barRow">
-            <div className="barLabel">CALORIES</div>
-            <div className="bar">
-              <div className="barFill" style={{ width: `${pct(totals.calories, g.calories)}%` }} />
-            </div>
-            <div className="barMeta">
-              {totals.calories} / {g.calories || "—"}
-            </div>
-          </div>
-
-          <div className="barRow">
-            <div className="barLabel">PROTEIN</div>
-            <div className="bar">
-              <div className="barFill" style={{ width: `${pct(totals.protein, g.protein)}%` }} />
-            </div>
-            <div className="barMeta">
-              {totals.protein}g / {g.protein || "—"}g
-            </div>
-          </div>
-
-          <div className="barRow">
-            <div className="barLabel">CARBS</div>
-            <div className="bar">
-              <div className="barFill" style={{ width: `${pct(totals.carbs, g.carbs)}%` }} />
-            </div>
-            <div className="barMeta">
-              {totals.carbs}g / {g.carbs || "—"}g
-            </div>
-          </div>
-
-          <div className="barRow">
-            <div className="barLabel">FATS</div>
-            <div className="bar">
-              <div className="barFill" style={{ width: `${pct(totals.fats, g.fats)}%` }} />
-            </div>
-            <div className="barMeta">
-              {totals.fats}g / {g.fats || "—"}g
-            </div>
-          </div>
-
-          <div className="miniRow">
-            <div className="miniPill">MOMENTS: {momentsCount}</div>
-            <div className="miniPill">P.S.: {psCount}</div>
-          </div>
-        </div>
-      </section>
-
-      {/* Context shortcuts */}
-      <section className="card" style={{ marginTop: 12 }}>
-        <div className="view">
-          <div className="pageHeader">
-            <div className="pageTitle">THE CONTEXT</div>
-          </div>
-
-          <div className="grid2">
-            <button className="btn" type="button" onClick={() => onGo?.("moments")}>
-              MOMENTS
-            </button>
-            <button className="btn" type="button" onClick={() => onGo?.("roidboy")}>
-              ROID BOY
-            </button>
-            <button className="btn" type="button" onClick={() => onGo?.("ps")}>
-              P.S.
-            </button>
-            <button className="btn" type="button" onClick={() => onGo?.("summation")}>
-              SUMMATION
+    <div className="dailyHub">
+      {/* ========== ASSESSMENT (PERMANENT) ========== */}
+      <SectionMarker src={ORNATE_ASSESS} size={52} />
+      <div className="zone">
+        <div className="zoneHead">
+          {/* no text */}
+          <div className="floatTools">
+            <button
+              type="button"
+              className="glyphBtn"
+              aria-label="Open Daily Hub (current)"
+              onClick={() => onGo?.("today")}
+            >
+              <img className="glyphImg" src="/ui/glyphs/sigil-eye.svg" alt="" />
             </button>
           </div>
         </div>
-      </section>
-    </div>
-  );
-}
+
+        <div className="view">
+          <AssessmentView
+            value={assessment}
+            onChange={(next) => onPatch?.({ assessment: next })}
+          />
+        </div>
+      </div>
+
+      {/* ========== INTAKE PROGRESS (PERMANENT - PROGRESS ONLY) ========== */}
+      <SectionMarker src={ORNATE_INTAKE} size={52} />
+      <div className="zone">
+        <div className="zoneHead">
+          <div className="floatTools">
+            <button
+              type="button"
+              className="glyphBtn"
+              aria-label="Open Intake"
+              onClick={() => onGo?.("intake")}
+            >
+              <img className="glyphImg" src="/ui/glyphs/intake.svg" alt="" />
+            </button>
+          </div>
+        </div>
+
+        <div className="view" style={{ paddingTop: 10 }}>
+          <BarRow label="CALORIES" value={totals.calories} goal={goals.calories} percent={pct(totals.calories, goals.calories)} />
+          <BarRow label="PROTEIN (G)" value={totals.proteinG} goal={goals.proteinG} percent={pct(totals.proteinG, goals.proteinG)} />
+          <BarRow label="CARBS (G)" value={totals.carbsG} goal={goals.carbsG} percent={pct(totals.carbsG, goals.carbsG)} />
+          <BarRow label="FAT (G)" value={totals.fatG} goal={goals.fatG} percent={pct(totals.fatG, goals.fatG)} />
+          <BarRow label="WATER (OZ)" value={totals.waterOz} goal={goals.waterOz} percent={pct(totals.waterOz, goals.waterOz)} />
+        </div>
+      </div>
+
+      {/* ========== THE CONTEXT (HIDDEN UNTIL FILLED) ========== */}
+      {hasContext ? (
+        <>
+          <SectionMarker src={ORNATE_CONTEXT} size={52} />
+          <div className="zone">
+            <div className="zoneHead">
+              <div className="floatTools">
+                <button
+                  type="button"
+                  className="glyphBtn"
+                  aria-label="Open Moments"
+                  onClick={() => onGo?.("moments")}
+                >
+                  <img className="glyphImg" src="/ui/glyphs/moments.svg" alt="" />
+                </button>
+                <button
+                  type="button"
+                  className="glyphBtn"
+                  aria-label="Open Roid Boy"
+                  onClick={() => onGo?.("roidboy")}
+                >
+                  <img className="glyphImg" src="/ui/glyphs/roidboy.svg" alt="" />
+                </button>
+                <button
+                  type="button"
+                  className="glyphBtn"
+                  aria-label="Open P.S."
+                  onClick={() => onGo?.("ps")}
+                >
+                  <img className="glyphImg" src="/ui/glyphs/ps.svg" alt="" />
+                </button>
+              </div>
+            </div>
+
+            {/* Context on hub is DISPLAY ONLY. No helper text. */}
+            <div className="view">
+              {/* Moments presence */}
+              {moments.length ? (
+                <MiniCount glyph="/ui/glyphs/moments.svg" count={moments.length} />
+              ) : null}
+
+              {/* Roid Boy presence */}
+              {roidboy ? <MiniDot glyph="/ui/glyphs/roidboy.svg" /> : null}
+
+              {/* P.S. presence */}
+              {ps.length ? (
+                <MiniCount glyph="/ui/glyphs/ps.svg" count={ps.length} />
+              ) : null}
+            </div>
+          </div>
+        </>
+      ) : null}
+
+      {/* ========== SUMMATION (HIDDEN UNTIL FILLED) ========== */}
+      {hasSummation ? (
+        <>
+          <SectionMarker src={ORNATE_SUMMATION} size={52} />
+          <div className="zone">
+            <div className="zoneHead">
+              <div className="floatTools">
+                <button
+                  type="button"
+                  className="glyphBtn"
+                  aria-label="Open Summation"
+                  onClick={() => onGo?.("summation")}
+                >
+                  <img className="
