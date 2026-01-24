@@ -2,18 +2,14 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 
-/**
- * LOCKED Sidebar list (NO Library here).
- * Swipe open from RIGHT EDGE hotzone.
- */
 const NAV = [
-  { id: "today", glyph: "/ui/glyphs/sigil-eye.svg" },
+  { id: "today", glyph: "/ui/glyphs/eye.svg" },
   { id: "intake", glyph: "/ui/glyphs/intake.svg" },
   { id: "roidboy", glyph: "/ui/glyphs/roidboy.svg" },
   { id: "moments", glyph: "/ui/glyphs/moments.svg" },
   { id: "ps", glyph: "/ui/glyphs/ps.svg" },
   { id: "summation", glyph: "/ui/glyphs/summation.svg" },
-  { id: "yearreview", glyph: "/ui/glyphs/year-review.svg" },
+  { id: "yearreview", glyph: "/ui/glyphs/year.svg" },
   { id: "seal", glyph: "/ui/glyphs/seal.svg" }
 ];
 
@@ -21,11 +17,10 @@ export default function Sidebar({ active, onSelect }) {
   const [open, setOpen] = useState(false);
   const start = useRef({ x: 0, y: 0, tracking: false });
 
-  const items = useMemo(() => NAV, []);
   const close = () => setOpen(false);
   const toggle = (v) => setOpen(!!v);
 
-  // RIGHT EDGE swipe opens (bottom-right doctrine supported)
+  // RIGHT EDGE swipe-only hotzone (bottom-right works because it's on right edge full height)
   useEffect(() => {
     const hot = document.getElementById("rightHotzone");
     if (!hot) return;
@@ -38,9 +33,14 @@ export default function Sidebar({ active, onSelect }) {
     const onMove = (e) => {
       if (!start.current.tracking) return;
       const t = e.touches[0];
-      const dx = start.current.x - t.clientX; // swipe left opens
+
+      // swipe left opens
+      const dx = start.current.x - t.clientX;
       const dy = Math.abs(t.clientY - start.current.y);
+
+      // prevent accidental opens while scrolling
       if (dy > 34) return;
+
       if (dx > 28) toggle(true);
     };
 
@@ -58,6 +58,8 @@ export default function Sidebar({ active, onSelect }) {
       hot.removeEventListener("touchend", onEnd);
     };
   }, []);
+
+  const items = useMemo(() => NAV, []);
 
   return (
     <>
