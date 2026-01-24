@@ -1,8 +1,7 @@
 "use client";
 
-/* ===== APPROVED LOCKED LISTS ===== */
-
 const MOODS = [
+  "Select…",
   "Horny for Peace",
   "Feral & Focused",
   "Violently Calm",
@@ -46,6 +45,7 @@ const MOODS = [
 ];
 
 const ERAS = [
+  "Select…",
   "Villain Era",
   "Whore4More",
   "Horny for Peace",
@@ -85,6 +85,7 @@ const ERAS = [
 ];
 
 const SINGLE = [
+  "Select…",
   "Single and Self-Controlled",
   "Single, Not Looking",
   "Single but Curious",
@@ -104,27 +105,27 @@ const SINGLE = [
   "Choosing Myself"
 ];
 
-/* ===== COMPONENT ===== */
-
 export default function AssessmentView({ value, onChange }) {
   const v = value || {};
-  const set = (p) => onChange?.({ ...v, ...p });
+  const set = (patch) => onChange?.({ ...v, ...patch });
 
   return (
-    <div className="assessment">
-
-      {/* TITLE — top / centered */}
+    <div>
+      {/* TITLE OF THE DAY — TOP / CENTER */}
       <div className="titleRow">
-        <input
-          className="titleInput"
-          value={v.title || ""}
-          onChange={(e) => set({ title: e.target.value })}
-        />
+        <div className="field" style={{ marginTop: 0 }}>
+          <label>TITLE OF THE DAY</label>
+          <input
+            className="titleInput"
+            value={v.title || ""}
+            onChange={(e) => set({ title: e.target.value })}
+          />
+        </div>
       </div>
 
-      {/* GRID */}
-      <div className="grid2">
-
+      {/* TWO-COLUMN GRID — LEFT/RIGHT ORDER LOCKED */}
+      <div className="grid2" style={{ paddingTop: 6 }}>
+        {/* LEFT COLUMN */}
         <div className="field">
           <label>HEAD HUMMER</label>
           <input
@@ -133,6 +134,7 @@ export default function AssessmentView({ value, onChange }) {
           />
         </div>
 
+        {/* RIGHT COLUMN */}
         <div className="field">
           <label>LOCATION</label>
           <input
@@ -141,16 +143,22 @@ export default function AssessmentView({ value, onChange }) {
           />
         </div>
 
+        {/* LEFT COLUMN */}
         <div className="field">
           <label>MOOD</label>
-          <select value={v.mood || ""} onChange={(e) => set({ mood: e.target.value })}>
-            <option value="" />
-            {MOODS.map((m) => (
-              <option key={m} value={m}>{m}</option>
+          <select
+            value={v.mood || ""}
+            onChange={(e) => set({ mood: e.target.value })}
+          >
+            {MOODS.map((m, i) => (
+              <option key={i} value={i === 0 ? "" : m}>
+                {m}
+              </option>
             ))}
           </select>
         </div>
 
+        {/* RIGHT COLUMN */}
         <div className="field">
           <label>WORD OF THE DAY</label>
           <input
@@ -159,26 +167,35 @@ export default function AssessmentView({ value, onChange }) {
           />
         </div>
 
+        {/* LEFT COLUMN */}
         <div className="field">
           <label>ERA</label>
-          <select value={v.era || ""} onChange={(e) => set({ era: e.target.value })}>
-            <option value="" />
-            {ERAS.map((e) => (
-              <option key={e} value={e}>{e}</option>
+          <select
+            value={v.era || ""}
+            onChange={(e) => set({ era: e.target.value })}
+          >
+            {ERAS.map((m, i) => (
+              <option key={i} value={i === 0 ? "" : m}>
+                {m}
+              </option>
             ))}
           </select>
         </div>
 
+        {/* RIGHT COLUMN */}
         <div className="field">
           <label>SINGLENESS LEVEL</label>
-          <select value={v.single || ""} onChange={(e) => set({ single: e.target.value })}>
-            <option value="" />
-            {SINGLE.map((s) => (
-              <option key={s} value={s}>{s}</option>
+          <select
+            value={v.single || ""}
+            onChange={(e) => set({ single: e.target.value })}
+          >
+            {SINGLE.map((m, i) => (
+              <option key={i} value={i === 0 ? "" : m}>
+                {m}
+              </option>
             ))}
           </select>
         </div>
-
       </div>
     </div>
   );
