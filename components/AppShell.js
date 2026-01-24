@@ -17,6 +17,22 @@ import SealView from "./SealView";
 
 import { getTodayISO, loadDay, ensureDay, saveDayPartial } from "@/lib/mmocStore";
 
+/**
+ * LOCKED sidebar order (your approved order) + library as a separate access glyph (directory).
+ *
+ * Sidebar order:
+ *  - today (daily hub)
+ *  - intake
+ *  - roidboy
+ *  - moments
+ *  - ps
+ *  - summation
+ *  - yearreview
+ *  - seal
+ *
+ * Library access:
+ *  - via DIRECTORY glyph in topbar (not a sidebar item)
+ */
 const VIEW_ORDER = [
   "today",
   "intake",
@@ -43,19 +59,21 @@ export default function AppShell() {
     setDay(next);
   }, [dayISO]);
 
-  const nav = useMemo(() => (id) => {
-    const next = VIEW_ORDER.includes(id) ? id : "today";
-    setWeaving(true);
-    window.setTimeout(() => {
-      setActive(next);
-      setWeaving(false);
-      // keep hash routing lightweight for long-term stability
-      try {
-        const desired = `#${next}`;
-        if (window.location.hash !== desired) window.history.replaceState(null, "", desired);
-      } catch {}
-    }, 520);
-  }, []);
+  const nav = useMemo(
+    () => (id) => {
+      const next = VIEW_ORDER.includes(id) ? id : "today";
+      setWeaving(true);
+      window.setTimeout(() => {
+        setActive(next);
+        setWeaving(false);
+        try {
+          const desired = `#${next}`;
+          if (window.location.hash !== desired) window.history.replaceState(null, "", desired);
+        } catch {}
+      }, 520);
+    },
+    []
+  );
 
   // Allow direct hash routing
   useEffect(() => {
@@ -80,7 +98,9 @@ export default function AppShell() {
 
   const headerDate = useMemo(() => {
     const d = new Date(dayISO + "T00:00:00");
-    return d.toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric" }).toUpperCase();
+    return d
+      .toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric" })
+      .toUpperCase();
   }, [dayISO]);
 
   if (!openingDone) {
@@ -93,12 +113,25 @@ export default function AppShell() {
 
       <header className="topbar">
         <div className="brandTitle">TELL NO LIES</div>
-        <div className="chip">{headerDate}</div>
+
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div className="chip">{headerDate}</div>
+
+          {/* DIRECTORY → Library (glyph only, no text) */}
+          <button
+            type="button"
+            className="glyphBtn"
+            aria-label="Open Library"
+            onClick={() => nav("library")}
+          >
+            <img className="glyphImg" src="/ui/glyphs/directory.svg" alt="" />
+          </button>
+        </div>
       </header>
 
       <main className="mainStage">
         {active === "today" ? (
-          <DailyHubView dayISO={dayISO} day={day} onPatch={patchDay} onGo={nav} />
+          <DailyHubView data={day} onPatch={patchDay} onGo={nav} />
         ) : null}
 
         {active === "intake" ? (
@@ -122,7 +155,7 @@ export default function AppShell() {
         ) : null}
 
         {active === "yearreview" ? (
-          <YearReviewView />
+          <YearReviewView dayISO={dayISO} day={day} onPatch={patchDay} />
         ) : null}
 
         {active === "seal" ? (
@@ -130,7 +163,13 @@ export default function AppShell() {
         ) : null}
 
         {active === "library" ? (
-          <LibraryView onOpenDate={(iso) => setDayISO(iso)} onGo={nav} />
+          <LibraryView
+            onOpenDate={(iso) => {
+              setDayISO(iso);
+              nav("today");
+            }}
+            onGo={nav}
+          />
         ) : null}
       </main>
 
