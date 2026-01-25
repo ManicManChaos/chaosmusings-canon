@@ -1,21 +1,19 @@
-import "./global.css";
-
 export const metadata = {
-  title: "Chaos Musings",
-  description: "Manic Musings of Chaos"
+  title: "chaosmusings.app",
+  description: "Chaos Musings",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        {/* iPad-focused icons (from /public/icon/app/) */}
+        {/* iOS / iPad Home Screen Icons */}
         <link rel="apple-touch-icon" sizes="120x120" href="/icon/app/icon-120.png" />
         <link rel="apple-touch-icon" sizes="167x167" href="/icon/app/icon-167.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/icon/app/icon-180.png" />
 
-        {/* Basic viewport */}
-        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        {/* Prevent old cached icon from winning */}
+        <meta name="apple-mobile-web-app-title" content="chaosmusings.app" />
       </head>
       <body>{children}</body>
     </html>
