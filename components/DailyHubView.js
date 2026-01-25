@@ -53,15 +53,19 @@ export default function DailyHubView({ data, onPatch, onGo }) {
         roidboy.libidoStatus)
     );
 
-  const hasContext = (moments && moments.length > 0) || hasRoidboy || (ps && ps.length > 0);
+  const hasContext = moments.length > 0 || hasRoidboy || ps.length > 0;
 
   // Summation appears ONLY if it has anything
   const summation = d.summation || {};
   const hasSummation = !!(summation && (summation.text || summation.close || summation.sealNote));
 
-  // ORNATE MARKERS (LOCKED to your real repo paths)
-  const ORNATE_ASSESS = "/ui/png/cgaf/sigil-eye.png";
-  const ORNATE_DIVIDER = "/ui/png/cgaf/strip-triad-sigils.png";
+  /**
+   * ORNATE MARKERS (REAL REPO PATHS)
+   * You showed these files exist in: /public/ui/png/
+   * If you later create /public/ui/ornate/, only change these constants.
+   */
+  const ORNATE_ASSESS = "/ui/png/sigil-eye.png";
+  const ORNATE_DIVIDER = "/ui/png/strip-triad-sigils.png";
 
   return (
     <div className="dailyHub">
@@ -71,15 +75,23 @@ export default function DailyHubView({ data, onPatch, onGo }) {
       <div className="zone">
         <div className="zoneHead">
           <div className="floatTools">
-            {/* Return-to-hub glyph button (eye) */}
-            <button type="button" className="glyphBtn" aria-label="Go to Daily Hub" onClick={() => onGo?.("today")}>
+            {/* Return-to-hub glyph button (EYE) */}
+            <button
+              type="button"
+              className="glyphBtn"
+              aria-label="Go to Daily Hub"
+              onClick={() => onGo?.("today")}
+            >
               <img className="glyphImg" src="/ui/glyphs/eye.svg" alt="" />
             </button>
           </div>
         </div>
 
         <div className="view">
-          <AssessmentView value={assessment} onChange={(next) => onPatch?.({ assessment: next })} />
+          <AssessmentView
+            value={assessment}
+            onChange={(next) => onPatch?.({ assessment: next })}
+          />
         </div>
       </div>
 
@@ -89,18 +101,48 @@ export default function DailyHubView({ data, onPatch, onGo }) {
       <div className="zone">
         <div className="zoneHead">
           <div className="floatTools">
-            <button type="button" className="glyphBtn" aria-label="Open Intake" onClick={() => onGo?.("intake")}>
+            <button
+              type="button"
+              className="glyphBtn"
+              aria-label="Open Intake"
+              onClick={() => onGo?.("intake")}
+            >
               <img className="glyphImg" src="/ui/glyphs/intake.svg" alt="" />
             </button>
           </div>
         </div>
 
         <div className="view" style={{ paddingTop: 10 }}>
-          <BarRow label="CALORIES" value={totals.calories} goal={goals.calories} percent={pct(totals.calories, goals.calories)} />
-          <BarRow label="PROTEIN (G)" value={totals.proteinG} goal={goals.proteinG} percent={pct(totals.proteinG, goals.proteinG)} />
-          <BarRow label="CARBS (G)" value={totals.carbsG} goal={goals.carbsG} percent={pct(totals.carbsG, goals.carbsG)} />
-          <BarRow label="FAT (G)" value={totals.fatG} goal={goals.fatG} percent={pct(totals.fatG, goals.fatG)} />
-          <BarRow label="WATER (OZ)" value={totals.waterOz} goal={goals.waterOz} percent={pct(totals.waterOz, goals.waterOz)} />
+          <BarRow
+            label="CALORIES"
+            value={totals.calories}
+            goal={goals.calories}
+            percent={pct(totals.calories, goals.calories)}
+          />
+          <BarRow
+            label="PROTEIN (G)"
+            value={totals.proteinG}
+            goal={goals.proteinG}
+            percent={pct(totals.proteinG, goals.proteinG)}
+          />
+          <BarRow
+            label="CARBS (G)"
+            value={totals.carbsG}
+            goal={goals.carbsG}
+            percent={pct(totals.carbsG, goals.carbsG)}
+          />
+          <BarRow
+            label="FAT (G)"
+            value={totals.fatG}
+            goal={goals.fatG}
+            percent={pct(totals.fatG, goals.fatG)}
+          />
+          <BarRow
+            label="WATER (OZ)"
+            value={totals.waterOz}
+            goal={goals.waterOz}
+            percent={pct(totals.waterOz, goals.waterOz)}
+          />
         </div>
       </div>
 
@@ -112,15 +154,30 @@ export default function DailyHubView({ data, onPatch, onGo }) {
           <div className="zone">
             <div className="zoneHead">
               <div className="floatTools">
-                <button type="button" className="glyphBtn" aria-label="Open Moments" onClick={() => onGo?.("moments")}>
+                <button
+                  type="button"
+                  className="glyphBtn"
+                  aria-label="Open Moments"
+                  onClick={() => onGo?.("moments")}
+                >
                   <img className="glyphImg" src="/ui/glyphs/moments.svg" alt="" />
                 </button>
 
-                <button type="button" className="glyphBtn" aria-label="Open Roid Boy" onClick={() => onGo?.("roidboy")}>
+                <button
+                  type="button"
+                  className="glyphBtn"
+                  aria-label="Open Roid Boy"
+                  onClick={() => onGo?.("roidboy")}
+                >
                   <img className="glyphImg" src="/ui/glyphs/roidboy.svg" alt="" />
                 </button>
 
-                <button type="button" className="glyphBtn" aria-label="Open P.S." onClick={() => onGo?.("ps")}>
+                <button
+                  type="button"
+                  className="glyphBtn"
+                  aria-label="Open P.S."
+                  onClick={() => onGo?.("ps")}
+                >
                   <img className="glyphImg" src="/ui/glyphs/ps.svg" alt="" />
                 </button>
               </div>
@@ -145,7 +202,12 @@ export default function DailyHubView({ data, onPatch, onGo }) {
           <div className="zone">
             <div className="zoneHead">
               <div className="floatTools">
-                <button type="button" className="glyphBtn" aria-label="Open Summation" onClick={() => onGo?.("summation")}>
+                <button
+                  type="button"
+                  className="glyphBtn"
+                  aria-label="Open Summation"
+                  onClick={() => onGo?.("summation")}
+                >
                   <img className="glyphImg" src="/ui/glyphs/summation.svg" alt="" />
                 </button>
               </div>
