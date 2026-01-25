@@ -3,88 +3,66 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 /**
- * LOCKED GLYPH PATHS
- * These MUST match your repo folder:
- * public/ui/glyphs/*.svg
- *
- * Your screenshot shows:
- * eye.svg, intake.svg, roidboy.svg, moments.svg, ps.svg, summation.svg, year.svg, seal.svg, directory.svg, assessment.svg, library.svg
+ * Sidebar (LOCKED)
+ * - Opens ONLY by swiping LEFT from the RIGHT edge (bottom-right works).
+ * - Closes by tapping scrim OR selecting an item.
+ * - Glyph paths are LOCKED to: public/ui/glyphs/*.svg
  */
 
 const NAV = [
-  { id: "today", glyph: "/ui/glyphs/eye.svg" },
+  { id: "today", glyph: "/ui/glyphs/sigil-eye.svg" },
   { id: "intake", glyph: "/ui/glyphs/intake.svg" },
   { id: "roidboy", glyph: "/ui/glyphs/roidboy.svg" },
   { id: "moments", glyph: "/ui/glyphs/moments.svg" },
   { id: "ps", glyph: "/ui/glyphs/ps.svg" },
   { id: "summation", glyph: "/ui/glyphs/summation.svg" },
-  { id: "yearreview", glyph: "/ui/glyphs/year.svg" },
+  { id: "yearreview", glyph: "/ui/glyphs/year-review.svg" },
   { id: "seal", glyph: "/ui/glyphs/seal.svg" }
 ];
 
 export default function Sidebar({ active, onSelect }) {
   const [open, setOpen] = useState(false);
-  const start = useRef({ x: 0, y: 0, tracking: false, edge: "none" });
+  const start = useRef({ x: 0, y: 0, tracking: false });
 
   const close = () => setOpen(false);
-  const toggle = (v) => setOpen(!!v);
 
-  // Swipe-open from RIGHT edge, swipe-close from LEFT edge (iPad reliable)
+  // RIGHT EDGE swipe-open hotzone
   useEffect(() => {
-    const right = document.getElementById("rightHotzone");
-    const left = document.getElementById("leftHotzone");
-    if (!right || !left) return;
+    const hot = document.getElementById("rightHotzone");
+    if (!hot) return;
 
-    const onStartRight = (e) => {
-      const t = e.touches[0];
-      start.current = { x: t.clientX, y: t.clientY, tracking: true, edge: "right" };
+    const onStart = (e) => {
+      const t = e.touches?.[0];
+      if (!t) return;
+      start.current = { x: t.clientX, y: t.clientY, tracking: true };
     };
-    const onMoveRight = (e) => {
-      if (!start.current.tracking || start.current.edge !== "right") return;
-      const t = e.touches[0];
-      const dx = start.current.x - t.clientX; // swipe left opens
+
+    const onMove = (e) => {
+      if (!start.current.tracking) return;
+      const t = e.touches?.[0];
+      if (!t) return;
+
+      const dx = start.current.x - t.clientX; // swipe LEFT opens
       const dy = Math.abs(t.clientY - start.current.y);
+
+      // keep it tight so it doesn't open on vertical scroll
       if (dy > 34) return;
-      if (dx > 24) toggle(true);
+
+      if (dx > 24) setOpen(true);
     };
-    const onEndRight = () => {
+
+    const onEnd = () => {
       start.current.tracking = false;
-      start.current.edge = "none";
     };
 
-    const onStartLeft = (e) => {
-      const t = e.touches[0];
-      start.current = { x: t.clientX, y: t.clientY, tracking: true, edge: "left" };
-    };
-    const onMoveLeft = (e) => {
-      if (!start.current.tracking || start.current.edge !== "left") return;
-      const t = e.touches[0];
-      const dx = t.clientX - start.current.x; // swipe right closes
-      const dy = Math.abs(t.clientY - start.current.y);
-      if (dy > 34) return;
-      if (dx > 24) toggle(false);
-    };
-    const onEndLeft = () => {
-      start.current.tracking = false;
-      start.current.edge = "none";
-    };
-
-    right.addEventListener("touchstart", onStartRight, { passive: true });
-    right.addEventListener("touchmove", onMoveRight, { passive: true });
-    right.addEventListener("touchend", onEndRight, { passive: true });
-
-    left.addEventListener("touchstart", onStartLeft, { passive: true });
-    left.addEventListener("touchmove", onMoveLeft, { passive: true });
-    left.addEventListener("touchend", onEndLeft, { passive: true });
+    hot.addEventListener("touchstart", onStart, { passive: true });
+    hot.addEventListener("touchmove", onMove, { passive: true });
+    hot.addEventListener("touchend", onEnd, { passive: true });
 
     return () => {
-      right.removeEventListener("touchstart", onStartRight);
-      right.removeEventListener("touchmove", onMoveRight);
-      right.removeEventListener("touchend", onEndRight);
-
-      left.removeEventListener("touchstart", onStartLeft);
-      left.removeEventListener("touchmove", onMoveLeft);
-      left.removeEventListener("touchend", onEndLeft);
+      hot.removeEventListener("touchstart", onStart);
+      hot.removeEventListener("touchmove", onMove);
+      hot.removeEventListener("touchend", onEnd);
     };
   }, []);
 
@@ -92,9 +70,8 @@ export default function Sidebar({ active, onSelect }) {
 
   return (
     <>
-      {/* HOTZONES MUST EXIST (CSS controls width) */}
+      {/* RIGHT EDGE HOTZONE (CSS controls width + position) */}
       <div id="rightHotzone" className="rightHotzone" />
-      <div id="leftHotzone" className="leftHotzone" />
 
       {open ? <div className="navScrim" onClick={close} /> : null}
 
