@@ -20,9 +20,9 @@ export default function Sidebar({ active, onSelect }) {
   const close = () => setOpen(false);
   const toggle = (v) => setOpen(!!v);
 
-  // RIGHT EDGE swipe-only hotzone (bottom-right works because it's on right edge full height)
+  // LEFT EDGE swipe-only hotzone
   useEffect(() => {
-    const hot = document.getElementById("rightHotzone");
+    const hot = document.getElementById("leftHotzone");
     if (!hot) return;
 
     const onStart = (e) => {
@@ -33,14 +33,9 @@ export default function Sidebar({ active, onSelect }) {
     const onMove = (e) => {
       if (!start.current.tracking) return;
       const t = e.touches[0];
-
-      // swipe left opens
-      const dx = start.current.x - t.clientX;
+      const dx = t.clientX - start.current.x; // swipe right opens
       const dy = Math.abs(t.clientY - start.current.y);
-
-      // prevent accidental opens while scrolling
       if (dy > 34) return;
-
       if (dx > 28) toggle(true);
     };
 
@@ -63,7 +58,7 @@ export default function Sidebar({ active, onSelect }) {
 
   return (
     <>
-      <div id="rightHotzone" className="rightHotzone" />
+      <div id="leftHotzone" className="leftHotzone" />
 
       {open ? <div className="navScrim" onClick={close} /> : null}
 

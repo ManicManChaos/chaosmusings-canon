@@ -12,13 +12,6 @@ import AssessmentView from "@/components/AssessmentView";
  * NOT visible unless filled:
  *  - Context (only appears if any context exists)
  *  - Summation (only appears if any summation exists)
- *
- * No helper text. No extra titles.
- *
- * Props:
- *  - data: full app day state object (today)
- *  - onPatch: (partial) => void
- *  - onGo: (routeId) => void
  */
 export default function DailyHubView({ data, onPatch, onGo }) {
   const d = data || {};
@@ -53,19 +46,17 @@ export default function DailyHubView({ data, onPatch, onGo }) {
         roidboy.libidoStatus)
     );
 
-  const hasContext = moments.length > 0 || hasRoidboy || ps.length > 0;
+  const hasContext = (moments && moments.length > 0) || hasRoidboy || (ps && ps.length > 0);
 
   // Summation appears ONLY if it has anything
   const summation = d.summation || {};
   const hasSummation = !!(summation && (summation.text || summation.close || summation.sealNote));
 
-  /**
-   * ORNATE MARKERS (REAL REPO PATHS)
-   * You showed these files exist in: /public/ui/png/
-   * If you later create /public/ui/ornate/, only change these constants.
-   */
-  const ORNATE_ASSESS = "/ui/png/sigil-eye.png";
-  const ORNATE_DIVIDER = "/ui/png/strip-triad-sigils.png";
+  // ORNATE MARKERS (LOCKED PATHS)
+  const ORNATE_ASSESS = "/ui/ornate/ornate-assessment.png";
+  const ORNATE_INTAKE = "/ui/ornate/ornate-intake.png";
+  const ORNATE_CONTEXT = "/ui/ornate/ornate-context.png";
+  const ORNATE_SUMMATION = "/ui/ornate/ornate-summation.png";
 
   return (
     <div className="dailyHub">
@@ -75,7 +66,7 @@ export default function DailyHubView({ data, onPatch, onGo }) {
       <div className="zone">
         <div className="zoneHead">
           <div className="floatTools">
-            {/* Return-to-hub glyph button (EYE) */}
+            {/* Return-to-hub glyph button (eye) */}
             <button
               type="button"
               className="glyphBtn"
@@ -88,96 +79,48 @@ export default function DailyHubView({ data, onPatch, onGo }) {
         </div>
 
         <div className="view">
-          <AssessmentView
-            value={assessment}
-            onChange={(next) => onPatch?.({ assessment: next })}
-          />
+          <AssessmentView value={assessment} onChange={(next) => onPatch?.({ assessment: next })} />
         </div>
       </div>
 
       {/* ========== INTAKE PROGRESS (PERMANENT - PROGRESS ONLY) ========== */}
-      <SectionMarker src={ORNATE_DIVIDER} size={52} />
+      <SectionMarker src={ORNATE_INTAKE} size={56} />
 
       <div className="zone">
         <div className="zoneHead">
           <div className="floatTools">
-            <button
-              type="button"
-              className="glyphBtn"
-              aria-label="Open Intake"
-              onClick={() => onGo?.("intake")}
-            >
+            <button type="button" className="glyphBtn" aria-label="Open Intake" onClick={() => onGo?.("intake")}>
               <img className="glyphImg" src="/ui/glyphs/intake.svg" alt="" />
             </button>
           </div>
         </div>
 
         <div className="view" style={{ paddingTop: 10 }}>
-          <BarRow
-            label="CALORIES"
-            value={totals.calories}
-            goal={goals.calories}
-            percent={pct(totals.calories, goals.calories)}
-          />
-          <BarRow
-            label="PROTEIN (G)"
-            value={totals.proteinG}
-            goal={goals.proteinG}
-            percent={pct(totals.proteinG, goals.proteinG)}
-          />
-          <BarRow
-            label="CARBS (G)"
-            value={totals.carbsG}
-            goal={goals.carbsG}
-            percent={pct(totals.carbsG, goals.carbsG)}
-          />
-          <BarRow
-            label="FAT (G)"
-            value={totals.fatG}
-            goal={goals.fatG}
-            percent={pct(totals.fatG, goals.fatG)}
-          />
-          <BarRow
-            label="WATER (OZ)"
-            value={totals.waterOz}
-            goal={goals.waterOz}
-            percent={pct(totals.waterOz, goals.waterOz)}
-          />
+          <BarRow label="CALORIES" value={totals.calories} goal={goals.calories} percent={pct(totals.calories, goals.calories)} />
+          <BarRow label="PROTEIN (G)" value={totals.proteinG} goal={goals.proteinG} percent={pct(totals.proteinG, goals.proteinG)} />
+          <BarRow label="CARBS (G)" value={totals.carbsG} goal={goals.carbsG} percent={pct(totals.carbsG, goals.carbsG)} />
+          <BarRow label="FAT (G)" value={totals.fatG} goal={goals.fatG} percent={pct(totals.fatG, goals.fatG)} />
+          <BarRow label="WATER (OZ)" value={totals.waterOz} goal={goals.waterOz} percent={pct(totals.waterOz, goals.waterOz)} />
         </div>
       </div>
 
       {/* ========== THE CONTEXT (HIDDEN UNTIL FILLED) ========== */}
       {hasContext ? (
         <>
-          <SectionMarker src={ORNATE_DIVIDER} size={52} />
+          <SectionMarker src={ORNATE_CONTEXT} size={56} />
 
           <div className="zone">
             <div className="zoneHead">
               <div className="floatTools">
-                <button
-                  type="button"
-                  className="glyphBtn"
-                  aria-label="Open Moments"
-                  onClick={() => onGo?.("moments")}
-                >
+                <button type="button" className="glyphBtn" aria-label="Open Moments" onClick={() => onGo?.("moments")}>
                   <img className="glyphImg" src="/ui/glyphs/moments.svg" alt="" />
                 </button>
 
-                <button
-                  type="button"
-                  className="glyphBtn"
-                  aria-label="Open Roid Boy"
-                  onClick={() => onGo?.("roidboy")}
-                >
+                <button type="button" className="glyphBtn" aria-label="Open Roid Boy" onClick={() => onGo?.("roidboy")}>
                   <img className="glyphImg" src="/ui/glyphs/roidboy.svg" alt="" />
                 </button>
 
-                <button
-                  type="button"
-                  className="glyphBtn"
-                  aria-label="Open P.S."
-                  onClick={() => onGo?.("ps")}
-                >
+                <button type="button" className="glyphBtn" aria-label="Open P.S." onClick={() => onGo?.("ps")}>
                   <img className="glyphImg" src="/ui/glyphs/ps.svg" alt="" />
                 </button>
               </div>
@@ -197,17 +140,12 @@ export default function DailyHubView({ data, onPatch, onGo }) {
       {/* ========== SUMMATION (HIDDEN UNTIL FILLED) ========== */}
       {hasSummation ? (
         <>
-          <SectionMarker src={ORNATE_DIVIDER} size={52} />
+          <SectionMarker src={ORNATE_SUMMATION} size={56} />
 
           <div className="zone">
             <div className="zoneHead">
               <div className="floatTools">
-                <button
-                  type="button"
-                  className="glyphBtn"
-                  aria-label="Open Summation"
-                  onClick={() => onGo?.("summation")}
-                >
+                <button type="button" className="glyphBtn" aria-label="Open Summation" onClick={() => onGo?.("summation")}>
                   <img className="glyphImg" src="/ui/glyphs/summation.svg" alt="" />
                 </button>
               </div>
@@ -222,10 +160,6 @@ export default function DailyHubView({ data, onPatch, onGo }) {
     </div>
   );
 }
-
-/* =========================
-   Subcomponents (LOCKED)
-   ========================= */
 
 function BarRow({ label, value, goal, percent }) {
   const v = Number(value || 0);
@@ -252,9 +186,7 @@ function MiniCount({ glyph, count }) {
   return (
     <div style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
       <img className="glyphImg" src={glyph} alt="" style={{ width: 22, height: 22, opacity: 0.9 }} />
-      <div style={{ fontFamily: "var(--serif)", letterSpacing: ".18em", fontSize: 12, opacity: 0.8 }}>
-        {String(count)}
-      </div>
+      <div style={{ fontFamily: "var(--serif)", letterSpacing: ".18em", fontSize: 12, opacity: 0.8 }}>{String(count)}</div>
     </div>
   );
 }
@@ -270,7 +202,7 @@ function MiniDot({ glyph }) {
           borderRadius: 99,
           background: "rgba(216,168,184,.55)",
           boxShadow: "0 0 14px rgba(216,168,184,.18)",
-          opacity: 0.9
+          opacity: 0.9,
         }}
       />
     </div>
