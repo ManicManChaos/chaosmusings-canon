@@ -17,21 +17,17 @@ import SealView from "./SealView";
 
 import { getTodayISO, loadDay, ensureDay, saveDayPartial } from "@/lib/mmocStore";
 
-/**
- * LOCKED sidebar order:
- *  - today (daily hub)
- *  - intake
- *  - roidboy
- *  - moments
- *  - ps
- *  - summation
- *  - yearreview
- *  - seal
- *
- * Library access:
- *  - via DIRECTORY glyph in topbar (not a sidebar item)
- */
-const VIEW_ORDER = ["today", "intake", "roidboy", "moments", "ps", "summation", "yearreview", "seal", "library"];
+const VIEW_ORDER = [
+  "today",
+  "intake",
+  "roidboy",
+  "moments",
+  "ps",
+  "summation",
+  "yearreview",
+  "seal",
+  "library"
+];
 
 export default function AppShell() {
   const [openingDone, setOpeningDone] = useState(false);
@@ -95,21 +91,18 @@ export default function AppShell() {
     <div className="appRoot">
       <Sidebar active={active} onSelect={nav} />
 
-      <header className="topbar">
-        {/* LEFT: empty spacer (keeps title centered) */}
-        <div style={{ width: 44, height: 44 }} />
+      <header className="topbar topbarGrid">
+        <div className="topbarLeft" />
 
-        {/* CENTER: title */}
-        <div className="brandTitle" style={{ textAlign: "center" }}>
-          TELL NO LIES
+        <div className="topbarCenter">
+          <div className="brandTitle glowTitle">TELL NO LIES</div>
         </div>
 
-        {/* RIGHT: date + directory glyph */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <div className="topbarRight">
           <div className="chip">{headerDate}</div>
 
           <button type="button" className="glyphBtn" aria-label="Open Library" onClick={() => nav("library")}>
-            <img className="glyphImg" src="/ui/glyphs/directory.svg" alt="" />
+            <img className="glyphImg" src="/ui/glyphs/directory.svg" alt="" draggable={false} />
           </button>
         </div>
       </header>
