@@ -2,31 +2,39 @@
 
 /**
  * SectionMarker (LOCKED)
- * - Ornate divider glyph ONLY (no text)
- * - Centered
- * - Used on Daily Hub section boundaries
+ * - Renders a centered ornate marker between hub sections.
+ * - Size is controlled and cannot "blow up".
+ * - No text.
+ *
+ * Props:
+ *  - src: string (public path)
+ *  - size: number (px) — applies to height; width auto by aspect ratio
  */
-export default function SectionMarker({ src, alt = "", size = 46 }) {
+export default function SectionMarker({ src, size = 52 }) {
+  const h = Number(size || 52);
+
   return (
     <div
       className="sectionMarker"
-      aria-hidden="true"
       style={{
         display: "flex",
         justifyContent: "center",
-        padding: "18px 0 12px",
+        alignItems: "center",
+        padding: "14px 0 10px",
+        pointerEvents: "none"
       }}
     >
       <img
         src={src}
-        alt={alt}
+        alt=""
         draggable={false}
         style={{
-          width: size,
-          height: size,
+          height: h,
+          width: "auto",
+          maxWidth: "92vw",
           objectFit: "contain",
           opacity: 0.92,
-          filter: "drop-shadow(0 0 14px rgba(176,141,43,.10))",
+          filter: "drop-shadow(0 8px 18px rgba(0,0,0,.35))"
         }}
       />
     </div>
