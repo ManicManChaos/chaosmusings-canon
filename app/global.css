@@ -1,66 +1,317 @@
-/* ====== COLOR ENFORCEMENT ====== */
+/* app/global.css — FULL REPLACEMENT (LOCKED BASE) */
+
+/* ========== BASE / TOKENS ========== */
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+
+:root{
+  --greenblack:#050a08;
+  --greenblack-2:#070c0a;
+  --ink:#030504;
+
+  --nude:#d9c3b3;
+  --nude-2:#cdb6a7;
+  --pink:#d8a8b8;
+  --gold:#b08d2b;
+  --gold-2:#8f6f1e;
+
+  --line: rgba(217,195,179,.14);
+  --line-soft: rgba(217,195,179,.09);
+  --wash: rgba(0,0,0,.18);
+  --panel: rgba(8,12,10,.52);
+  --panel-2: rgba(8,12,10,.42);
+
+  --r1: 14px;
+  --r2: 22px;
+
+  --shadow: 0 14px 40px rgba(0,0,0,.45);
+
+  --serif: ui-serif, "Iowan Old Style", "Palatino Linotype", Palatino, "Times New Roman", Times, serif;
+  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* ========== BACKGROUND / GLOBAL COLOR ========== */
 body{
-  color: var(--nude);
+  margin:0;
+  color: var(--nude);                 /* nude pink font */
+  background:
+    radial-gradient(1000px 650px at 18% 12%, rgba(176,141,43,.10), transparent 62%),
+    radial-gradient(900px 620px at 78% 28%, rgba(216,168,184,.08), transparent 64%),
+    radial-gradient(1100px 700px at 45% 88%, rgba(205,182,167,.07), transparent 66%),
+    linear-gradient(180deg, var(--ink) 0%, var(--greenblack) 55%, var(--ink) 100%);
+  overflow-x:hidden;
 }
 
-/* Make sure default text inherits nude */
-.appRoot, .mainStage, .zone, .view, label, input, select, textarea{
-  color: var(--nude);
+/* subtle shimmer overlay */
+body::before{
+  content:"";
+  position:fixed;
+  inset:-60px;
+  pointer-events:none;
+  background:
+    radial-gradient(620px 380px at 28% 24%, rgba(216,168,184,.05), transparent 62%),
+    radial-gradient(520px 360px at 74% 46%, rgba(176,141,43,.05), transparent 64%),
+    conic-gradient(from 180deg at 50% 50%,
+      rgba(255,255,255,.02),
+      rgba(0,0,0,0),
+      rgba(255,255,255,.03),
+      rgba(0,0,0,0),
+      rgba(255,255,255,.02)
+    );
+  filter: blur(18px);
+  opacity:.45;
+  mix-blend-mode: screen;
+  animation: shimmer 10s ease-in-out infinite alternate;
+}
+@keyframes shimmer{
+  from{ transform: translate3d(-10px,-6px,0) scale(1.02); opacity:.38; }
+  to  { transform: translate3d( 12px, 8px,0) scale(1.03); opacity:.52; }
 }
 
-/* ====== TOPBAR LAYOUT (CENTER TITLE / RIGHT DATE) ====== */
-.topbarGrid{
-  display:grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items:center;
+/* ========== APP ROOT ========== */
+.appRoot{
+  min-height: 100%;
 }
-.topbarLeft{ justify-self:start; }
-.topbarCenter{ justify-self:center; }
-.topbarRight{
-  justify-self:end;
+
+.mainStage{
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 18px;
+}
+
+/* ========== TOPBAR (TELL NO LIES + DATE) ========== */
+.topbar{
+  position: sticky;
+  top: 0;
+  z-index: 50;
   display:flex;
   align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-bottom:1px solid var(--line-soft);
+  background: rgba(4,6,5,.62);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.brandTitle{
+  font-family: var(--serif);
+  letter-spacing:.30em;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--pink);
+  text-shadow: 0 0 18px rgba(216,168,184,.22);  /* glow */
+}
+
+.chip{
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(217,195,179,.14);
+  background: rgba(0,0,0,.18);
+  color: rgba(217,195,179,.82);
+  font-family: var(--serif);
+  letter-spacing:.12em;
+  text-transform: uppercase;
+  font-size: 12px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* ========== GLYPHS (prevents ? rendering issues by enforcing sane sizing) ========== */
+.glyphImg{
+  width: 26px;
+  height: 26px;
+  display:block;
+  object-fit: contain;
+  object-position: center;
+  image-rendering: -webkit-optimize-contrast;
+  filter: drop-shadow(0 0 10px rgba(176,141,43,.08));
+}
+
+/* small round glyph buttons */
+.glyphBtn{
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: 1px solid rgba(217,195,179,.14);
+  background: rgba(0,0,0,.18);
+  padding: 0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
+}
+
+/* ========== ZONES / CARDS ========== */
+.zone{
+  margin-top: 12px;
+  border-radius: var(--r2);
+  border: 1px solid rgba(217,195,179,.12);
+  background: rgba(0,0,0,.14);
+  overflow:hidden;
+}
+
+.zoneHead{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:12px;
+  padding: 14px 14px 10px;
+  border-bottom: 1px solid rgba(217,195,179,.08);
+}
+
+.view{
+  padding: 16px 16px 18px;
+}
+
+/* ========== FORMS ========== */
+.grid2{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+@media (max-width:820px){
+  .grid2{ grid-template-columns: 1fr; }
+}
+
+.field{
+  display:grid;
+  gap:6px;
+  margin-top: 10px;
+}
+
+label{
+  font-family: var(--sans);
+  letter-spacing:.28em;
+  text-transform: uppercase;
+  font-size: 11px;
+  color: rgba(217,195,179,.72);
+}
+
+input, select, textarea{
+  width:100%;
+  padding: 12px 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(217,195,179,.12);
+  background: rgba(0,0,0,.14);
+  color: rgba(217,195,179,.90);
+  outline:none;
+  font-family: var(--sans);
+  font-size: 14px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.03);
+}
+
+textarea{
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* ========== PROGRESS BAR ========== */
+.bar{
+  height:10px;
+  border-radius:999px;
+  border:1px solid rgba(217,195,179,.12);
+  background: rgba(0,0,0,.12);
+  overflow:hidden;
+}
+
+/* ========== ORNATE MARKERS (subtle fade) ========== */
+.sectionMarker{
+  width: 100%;
+  display:flex;
+  justify-content:center;
+  margin: 18px 0 10px;
+  opacity: .92;
+}
+.sectionMarker img{
+  display:block;
+  max-width: min(560px, 92vw);
+  height: auto;
+  filter:
+    drop-shadow(0 10px 26px rgba(0,0,0,.42))
+    drop-shadow(0 0 16px rgba(216,168,184,.08));
+  opacity: .92;
+}
+
+/* ========== RIGHT EDGE SWIPE SIDEBAR ========== */
+.navScrim{
+  position:fixed;
+  inset:0;
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 80;
+}
+
+/* slide in from RIGHT */
+.sidePlane{
+  position:fixed;
+  top:0;
+  right:0;
+  height:100%;
+  width: 240px;
+  transform: translateX(110%);
+  transition: transform .22s ease;
+  z-index: 90;
+  border-left: 1px solid rgba(217,195,179,.12);
+  background: rgba(4,6,5,.70);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+.sidePlane.isOpen{ transform: translateX(0); }
+
+.sidePlaneInner{
+  padding: 14px;
+  display:flex;
+  flex-direction:column;
   gap:10px;
 }
 
-/* Pink glow for title ONLY */
-.glowTitle{
-  color: var(--pink);
-  text-shadow: 0 0 18px rgba(216,168,184,.35), 0 0 44px rgba(216,168,184,.18);
-  letter-spacing:.34em;
-  text-transform:uppercase;
-  font-family: var(--serif);
-  font-weight: 600;
+.glyphNav{
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  border: 1px solid rgba(217,195,179,.12);
+  background: rgba(0,0,0,.18);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+}
+.glyphNav.isActive{
+  border-color: rgba(216,168,184,.30);
+  box-shadow: 0 0 18px rgba(216,168,184,.10);
 }
 
-/* ====== GLYPH IMAGE NORMALIZATION ====== */
-.glyphImg{
-  width: 22px;
-  height: 22px;
-  object-fit: contain;
-  display:block;
-}
-
-/* ====== SIDEBAR HOTZONES (MUST EXIST) ====== */
+/* BOTTOM-RIGHT hotzone for swipe (engage sidebar) */
 .rightHotzone{
   position:fixed;
   right:0;
-  top:0;
-  width: 22px;
-  height: 100%;
-  z-index: 120;
+  bottom:0;
+  width: 26px;
+  height: 46%;
+  z-index: 95;
   background: transparent;
-}
-.leftHotzone{
-  position:fixed;
-  left:0;
-  top:0;
-  width: 22px;
-  height: 100%;
-  z-index: 120;
-  background: transparent;
+  touch-action: pan-y;
 }
 
-/* Ensure sidebar is above content */
-.sidePlane{ z-index: 130; }
-.navScrim{ z-index: 125; }
+/* ========== WEAVE OVERLAY (if used) ========== */
+.weave{
+  position:fixed;
+  inset:0;
+  z-index: 120;
+  background:
+    radial-gradient(700px 380px at 62% 40%, rgba(216,168,184,.10), transparent 62%),
+    radial-gradient(820px 520px at 42% 70%, rgba(176,141,43,.10), transparent 64%),
+    rgba(0,0,0,.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  animation: weaveFade .52s ease both;
+}
+@keyframes weaveFade{
+  from{ opacity: 0; }
+  to{ opacity: 1; }
+}
