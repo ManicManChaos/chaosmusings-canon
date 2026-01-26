@@ -1,14 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-
-/**
- * LOCKED SIDEBAR
- * - RIGHT EDGE swipe only
- * - No left hotzone
- * - Glyphs only
- * - Paths MUST match /public/ui/glyphs
- */
+import { useEffect, useRef, useState } from "react";
 
 const NAV = [
   { id: "today", glyph: "/ui/glyphs/eye.svg" },
@@ -23,38 +15,32 @@ const NAV = [
 
 export default function Sidebar({ active, onSelect }) {
   const [open, setOpen] = useState(false);
-  const start = useRef({ x: 0, y: 0, tracking: false });
+  const start = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
-    const hot = document.getElementById("rightHotzone");
-    if (!hot) return;
+    const zone = document.getElementById("rightHotzone");
+    if (!zone) return;
 
-    const onStart = (e) => {
+    const startTouch = (e) => {
       const t = e.touches[0];
-      start.current = { x: t.clientX, y: t.clientY, tracking: true };
+      start.current = { x: t.clientX, y: t.clientY };
     };
 
-    const onMove = (e) => {
-      if (!start.current.tracking) return;
+    const moveTouch = (e) => {
       const t = e.touches[0];
-      const dx = start.current.x - t.clientX; // swipe LEFT opens
-      const dy = Math.abs(t.clientY - start.current.y);
-      if (dy > 34) return;
+      const dx = start.current.x - t.clientX;
+      const dy = Math.abs(start.current.y - t.clientY);
+
+      if (dy > 30) return;
       if (dx > 24) setOpen(true);
     };
 
-    const onEnd = () => {
-      start.current.tracking = false;
-    };
-
-    hot.addEventListener("touchstart", onStart, { passive: true });
-    hot.addEventListener("touchmove", onMove, { passive: true });
-    hot.addEventListener("touchend", onEnd, { passive: true });
+    zone.addEventListener("touchstart", startTouch, { passive: true });
+    zone.addEventListener("touchmove", moveTouch, { passive: true });
 
     return () => {
-      hot.removeEventListener("touchstart", onStart);
-      hot.removeEventListener("touchmove", onMove);
-      hot.removeEventListener("touchend", onEnd);
+      zone.removeEventListener("touchstart", startTouch);
+      zone.removeEventListener("touchmove", moveTouch);
     };
   }, []);
 
@@ -64,19 +50,18 @@ export default function Sidebar({ active, onSelect }) {
 
       {open && <div className="navScrim" onClick={() => setOpen(false)} />}
 
-      <aside className={`sidePlane ${open ? "isOpen" : ""}`} aria-hidden={!open}>
+      <aside className={`sidePlane ${open ? "isOpen" : ""}`}>
         <div className="sidePlaneInner">
-          {NAV.map((it) => (
+          {NAV.map((n) => (
             <button
-              key={it.id}
-              className={`glyphNav ${active === it.id ? "isActive" : ""}`}
+              key={n.id}
+              className={`glyphNav ${active === n.id ? "isActive" : ""}`}
               onClick={() => {
                 setOpen(false);
-                onSelect(it.id);
+                onSelect(n.id);
               }}
-              aria-label={it.id}
             >
-              <img src={it.glyph} className="glyphImg" alt="" draggable={false} />
+              <img src={n.glyph} className="glyphImg" alt="" />
             </button>
           ))}
         </div>
