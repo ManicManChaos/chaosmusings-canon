@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Sidebar from "./Sidebar";
+import Sidebar from "./SidebarView`";
 import Weave from "./Weave";
 import OpeningFlow from "./OpeningFlow";
 
