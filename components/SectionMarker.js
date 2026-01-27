@@ -1,12 +1,14 @@
 "use client";
 
 /**
- * SectionMarker (LOCKED)
- * Ornate divider image used as a section marker.
- * - Subtle fade so it sits in the UI (not chunky)
+ * LOCKED
+ * - Ornate PNG only
  * - No text
+ * - Centered
+ * - Subtle fade
  */
-export default function SectionMarker({ src, size = 52 }) {
+
+export default function SectionMarker({ src, size = 56 }) {
   if (!src) return null;
 
   return (
@@ -14,9 +16,8 @@ export default function SectionMarker({ src, size = 52 }) {
       style={{
         display: "flex",
         justifyContent: "center",
-        margin: "18px 0 10px",
-        pointerEvents: "none",
-        userSelect: "none",
+        margin: "22px 0 14px",
+        opacity: 0.85
       }}
     >
       <img
@@ -25,11 +26,9 @@ export default function SectionMarker({ src, size = 52 }) {
         draggable={false}
         style={{
           width: size,
-          height: size,
-          objectFit: "contain",
-          opacity: 0.82,
-          filter: "blur(0.15px) drop-shadow(0 0 18px rgba(176,141,43,.10))",
-          transform: "translateZ(0)",
+          height: "auto",
+          filter: "drop-shadow(0 0 14px rgba(216,168,184,.22))",
+          transition: "opacity .4s ease"
         }}
       />
     </div>
