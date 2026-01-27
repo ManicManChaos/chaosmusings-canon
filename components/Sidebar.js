@@ -3,20 +3,20 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 /**
- * Sidebar (LOCKED)
- * - Opens ONLY by swiping LEFT from the RIGHT edge (bottom-right works).
- * - Closes by tapping scrim OR selecting an item.
- * - Glyph paths are LOCKED to: public/ui/glyphs/*.svg
+ * LOCKED
+ * - Right-edge swipe ONLY
+ * - Glyph paths: /public/ui/glyphs/*.svg
+ * - No left hotspot
  */
 
 const NAV = [
-  { id: "today", glyph: "/ui/glyphs/sigil-eye.svg" },
+  { id: "today", glyph: "/ui/glyphs/eye.svg" },
   { id: "intake", glyph: "/ui/glyphs/intake.svg" },
   { id: "roidboy", glyph: "/ui/glyphs/roidboy.svg" },
   { id: "moments", glyph: "/ui/glyphs/moments.svg" },
   { id: "ps", glyph: "/ui/glyphs/ps.svg" },
   { id: "summation", glyph: "/ui/glyphs/summation.svg" },
-  { id: "yearreview", glyph: "/ui/glyphs/year-review.svg" },
+  { id: "yearreview", glyph: "/ui/glyphs/year.svg" },
   { id: "seal", glyph: "/ui/glyphs/seal.svg" }
 ];
 
@@ -24,31 +24,22 @@ export default function Sidebar({ active, onSelect }) {
   const [open, setOpen] = useState(false);
   const start = useRef({ x: 0, y: 0, tracking: false });
 
-  const close = () => setOpen(false);
-
-  // RIGHT EDGE swipe-open hotzone
   useEffect(() => {
     const hot = document.getElementById("rightHotzone");
     if (!hot) return;
 
     const onStart = (e) => {
-      const t = e.touches?.[0];
-      if (!t) return;
+      const t = e.touches[0];
       start.current = { x: t.clientX, y: t.clientY, tracking: true };
     };
 
     const onMove = (e) => {
       if (!start.current.tracking) return;
-      const t = e.touches?.[0];
-      if (!t) return;
-
-      const dx = start.current.x - t.clientX; // swipe LEFT opens
+      const t = e.touches[0];
+      const dx = start.current.x - t.clientX;
       const dy = Math.abs(t.clientY - start.current.y);
-
-      // keep it tight so it doesn't open on vertical scroll
-      if (dy > 34) return;
-
-      if (dx > 24) setOpen(true);
+      if (dy > 30) return;
+      if (dx > 22) setOpen(true);
     };
 
     const onEnd = () => {
@@ -70,10 +61,10 @@ export default function Sidebar({ active, onSelect }) {
 
   return (
     <>
-      {/* RIGHT EDGE HOTZONE (CSS controls width + position) */}
+      {/* RIGHT EDGE HOTZONE */}
       <div id="rightHotzone" className="rightHotzone" />
 
-      {open ? <div className="navScrim" onClick={close} /> : null}
+      {open && <div className="navScrim" onClick={() => setOpen(false)} />}
 
       <aside className={`sidePlane ${open ? "isOpen" : ""}`} aria-hidden={!open}>
         <div className="sidePlaneInner">
@@ -83,7 +74,7 @@ export default function Sidebar({ active, onSelect }) {
               type="button"
               className={`glyphNav ${active === it.id ? "isActive" : ""}`}
               onClick={() => {
-                close();
+                setOpen(false);
                 onSelect?.(it.id);
               }}
               aria-label={it.id}
