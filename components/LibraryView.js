@@ -3,6 +3,60 @@
 import { useEffect, useMemo, useState } from "react";
 import { getEraForMonth, getMonthKey, listDays } from "@/lib/mmocStore";
 
+const GLYPH_DIR = [
+  { id: "today", label: "TODAY", meaning: "Daily Hub / Tell No Lies", src: "/ui/ornate/ornate-today.png" },
+  { id: "intake", label: "INTAKE", meaning: "Body + inputs", src: "/ui/ornate/ornate-intake.png" },
+  { id: "roidboy", label: "ROIDBOY", meaning: "Cycle / protocol tracking", src: "/ui/ornate/ornate-roidboy.png" },
+  { id: "moments", label: "MOMENTS", meaning: "Captures + highlights", src: "/ui/ornate/ornate-moments.png" },
+  { id: "ps", label: "PS", meaning: "Post-script / notes", src: "/ui/ornate/ornate-ps.png" },
+  { id: "summation", label: "SUMMATION", meaning: "Wrap / totals", src: "/ui/ornate/ornate-summation.png" },
+  { id: "yearreview", label: "YEAR REVIEW", meaning: "Long-view synthesis", src: "/ui/ornate/ornate-yearreview.png" },
+  { id: "directory", label: "DIRECTORY", meaning: "Sections / navigation map", src: "/ui/ornate/ornate-directory.png" },
+  { id: "settings", label: "SETTINGS", meaning: "App systems + preferences", src: "/ui/ornate/ornate-settings.png" },
+  { id: "seal", label: "SEAL", meaning: "Ritual stamp / confirm", src: "/ui/ornate/ornate-seal.png" },
+  { id: "context", label: "CONTEXT", meaning: "Reference / background layer", src: "/ui/ornate/ornate-context.png" },
+  { id: "assessment", label: "ASSESSMENT", meaning: "Score / check-in", src: "/ui/ornate/ornate-assessment.png" },
+];
+
+const SYSTEMS_MAP = [
+  { k: "LOCAL STORE", v: "mmocStore (device cache + day index)" },
+  { k: "CLOUD", v: "Supabase (auth + persistence)" },
+  { k: "ROUTING", v: "Single app shell; view switch by id (no URL fan-out)" },
+  { k: "GLYPHS", v: "Ornate gold PNGs only: /public/ui/ornate/*.png" },
+];
+
+const APP_MAP = [
+  { k: "TODAY", v: "Daily Hub (Tell No Lies) → primary entry" },
+  { k: "INTAKE", v: "Inputs captured for the day" },
+  { k: "ROIDBOY", v: "Cycle/protocol tracking" },
+  { k: "MOMENTS", v: "Moments log" },
+  { k: "PS", v: "Notes and post-script" },
+  { k: "SUMMATION", v: "Daily summary" },
+  { k: "YEAR REVIEW", v: "Long-view review" },
+  { k: "LIBRARY", v: "Saved days + App Info Book" },
+  { k: "SETTINGS", v: "Preferences + system status" },
+];
+
+const SETTINGS_MAP = [
+  { k: "GLYPH SYSTEM", v: "Ornate gold only. No repeats. Medium size." },
+  { k: "COLOR", v: "Nude/pink text throughout + gold accents" },
+  { k: "GLOW", v: "Enabled (Tell No Lies + global soft glow)" },
+  { k: "SIDEBAR", v: "Right-edge hotspot enlarged for swipe" },
+];
+
+function KV({ rows }) {
+  return (
+    <div className="kv">
+      {rows.map((r) => (
+        <div key={r.k} className="kvRow">
+          <div className="kvK">{r.k}</div>
+          <div className="kvV">{r.v}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function LibraryView({ onOpenDate, onGo }) {
   const [days, setDays] = useState([]);
 
@@ -62,6 +116,62 @@ export default function LibraryView({ onOpenDate, onGo }) {
               ))}
             </div>
           )}
+        </div>
+      </section>
+
+      {/* APP INFO BOOK — Library */}
+      <section className="card" style={{ marginTop: 14 }}>
+        <div className="view">
+          <div className="pageHeader">
+            <div className="pageTitle">APP INFO BOOK</div>
+          </div>
+
+          <div className="zone">
+            <div className="zoneHead">
+              <div className="zoneTitle">SYSTEMS MAP</div>
+            </div>
+            <div className="view">
+              <KV rows={SYSTEMS_MAP} />
+            </div>
+          </div>
+
+          <div className="zone">
+            <div className="zoneHead">
+              <div className="zoneTitle">APP MAP</div>
+            </div>
+            <div className="view">
+              <KV rows={APP_MAP} />
+            </div>
+          </div>
+
+          <div className="zone">
+            <div className="zoneHead">
+              <div className="zoneTitle">SETTINGS</div>
+            </div>
+            <div className="view">
+              <KV rows={SETTINGS_MAP} />
+            </div>
+          </div>
+
+          <div className="zone">
+            <div className="zoneHead">
+              <div className="zoneTitle">GLYPH DIRECTORY</div>
+            </div>
+
+            <div className="view">
+              <div className="glyphGrid">
+                {GLYPH_DIR.map((g) => (
+                  <div key={g.id} className="glyphCard">
+                    <img className="glyphImg" src={g.src} alt={g.label} />
+                    <div className="glyphText">
+                      <div className="glyphName">{g.label}</div>
+                      <div className="glyphMeaning">{g.meaning}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </div>

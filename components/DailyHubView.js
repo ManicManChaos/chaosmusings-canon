@@ -1,6 +1,5 @@
 "use client";
 
-import SectionMarker from "@/components/SectionMarker";
 import AssessmentView from "@/components/AssessmentView";
 
 /**
@@ -53,7 +52,6 @@ export default function DailyHubView({ data, onPatch, onGo }) {
   return (
     <div className="dailyHub">
       {/* ASSESSMENT */}
-      <SectionMarker src={ORNATE_ASSESS} size={72} />
       <div className="zone">
         <div className="zoneHead">
           <div className="floatTools">
@@ -71,7 +69,6 @@ export default function DailyHubView({ data, onPatch, onGo }) {
       </div>
 
       {/* INTAKE PROGRESS */}
-      <SectionMarker src={ORNATE_INTAKE} size={72} />
       <div className="zone">
         <div className="zoneHead">
           <div className="floatTools">
@@ -93,13 +90,10 @@ export default function DailyHubView({ data, onPatch, onGo }) {
       {/* CONTEXT */}
       {hasContext && (
         <>
-          <SectionMarker src={ORNATE_CONTEXT} size={72} />
           <div className="zone">
             <div className="zoneHead">
               <div className="floatTools">
-                <Glyph onClick={() => onGo("moments")} src="/ui/ornate/ornate-moments.png" />
-                <Glyph onClick={() => onGo("roidboy")} src="/ui/ornate/ornate-roidboy.png" />
-                <Glyph onClick={() => onGo("ps")} src="/ui/ornate/ornate-ps.png" />
+                <Glyph onClick={() => onGo("moments")} src="/ui/ornate/ornate-context.png" />
               </div>
             </div>
           </div>
@@ -109,7 +103,6 @@ export default function DailyHubView({ data, onPatch, onGo }) {
       {/* SUMMATION */}
       {hasSummation && (
         <>
-          <SectionMarker src={ORNATE_SUMMATION} size={72} />
           <div className="zone">
             <div className="zoneHead">
               <div className="floatTools">
