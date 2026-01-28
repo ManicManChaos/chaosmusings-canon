@@ -136,8 +136,8 @@ body::before{
 
 /* ===== Buttons / glyphs ===== */
 .glyphImg{
-  width: 34px;
-  height: 34px;
+  width: 46px;
+  height: 46px;
   object-fit: contain;
   opacity: .92;
   display:block;
