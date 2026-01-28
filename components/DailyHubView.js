@@ -44,7 +44,7 @@ export default function DailyHubView({ data, onPatch, onGo }) {
   const summation = d.summation || {};
   const hasSummation = !!(summation.text || summation.close || summation.sealNote);
 
-  // ORNATE PATHS — MUST EXIST IN /public/ui/png/
+  // ORNATE PATHS — MUST EXIST IN /public/ui/ornate/
   const ORNATE_ASSESS = "/ui/ornate/ornate-assessment.png";
   const ORNATE_INTAKE = "/ui/ornate/ornate-intake.png";
   const ORNATE_CONTEXT = "/ui/ornate/ornate-context.png";
@@ -58,7 +58,7 @@ export default function DailyHubView({ data, onPatch, onGo }) {
         <div className="zoneHead">
           <div className="floatTools">
             <button className="glyphBtn" onClick={() => onGo("today")}>
-              <img className="glyphImg" src="/ui/glyphs/eye.svg" alt="" />
+              <img className="glyphImg" src="/ui/ornate/ornate-today.png" alt="" />
             </button>
           </div>
         </div>
@@ -76,7 +76,7 @@ export default function DailyHubView({ data, onPatch, onGo }) {
         <div className="zoneHead">
           <div className="floatTools">
             <button className="glyphBtn" onClick={() => onGo("intake")}>
-              <img className="glyphImg" src="/ui/glyphs/intake.svg" alt="" />
+              <img className="glyphImg" src="/ui/ornate/ornate-intake.png" alt="" />
             </button>
           </div>
         </div>
@@ -97,9 +97,9 @@ export default function DailyHubView({ data, onPatch, onGo }) {
           <div className="zone">
             <div className="zoneHead">
               <div className="floatTools">
-                <Glyph onClick={() => onGo("moments")} src="/ui/glyphs/moments.svg" />
-                <Glyph onClick={() => onGo("roidboy")} src="/ui/glyphs/roidboy.svg" />
-                <Glyph onClick={() => onGo("ps")} src="/ui/glyphs/ps.svg" />
+                <Glyph onClick={() => onGo("moments")} src="/ui/ornate/ornate-moments.png" />
+                <Glyph onClick={() => onGo("roidboy")} src="/ui/ornate/ornate-roidboy.png" />
+                <Glyph onClick={() => onGo("ps")} src="/ui/ornate/ornate-ps.png" />
               </div>
             </div>
           </div>
@@ -113,7 +113,7 @@ export default function DailyHubView({ data, onPatch, onGo }) {
           <div className="zone">
             <div className="zoneHead">
               <div className="floatTools">
-                <Glyph onClick={() => onGo("summation")} src="/ui/glyphs/summation.svg" />
+                <Glyph onClick={() => onGo("summation")} src="/ui/ornate/ornate-summation.png" />
               </div>
             </div>
           </div>

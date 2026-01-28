@@ -100,7 +100,7 @@ export default function AppShell() {
           <div className="chip">{headerDate}</div>
 
           <button type="button" className="glyphBtn" aria-label="Open Library" onClick={() => nav("library")}>
-            <img className="glyphImg" src="/ui/glyphs/directory.svg" alt="" draggable={false} />
+            <img className="glyphImg" src="/ui/ornate/ornate-directory.png" alt="" draggable={false} />
           </button>
         </div>
       </header>

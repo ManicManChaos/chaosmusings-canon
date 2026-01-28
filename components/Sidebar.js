@@ -5,19 +5,19 @@ import { useEffect, useMemo, useRef, useState } from "react";
 /**
  * LOCKED
  * - Right-edge swipe ONLY
- * - Glyph paths: /public/ui/glyphs/*.svg
+ * - Glyph paths: /public/ui/ornate/*.png
  * - No left hotspot
  */
 
 const NAV = [
-  { id: "today", glyph: "/ui/glyphs/eye.svg" },
-  { id: "intake", glyph: "/ui/glyphs/intake.svg" },
-  { id: "roidboy", glyph: "/ui/glyphs/roidboy.svg" },
-  { id: "moments", glyph: "/ui/glyphs/moments.svg" },
-  { id: "ps", glyph: "/ui/glyphs/ps.svg" },
-  { id: "summation", glyph: "/ui/glyphs/summation.svg" },
-  { id: "yearreview", glyph: "/ui/glyphs/year.svg" },
-  { id: "seal", glyph: "/ui/glyphs/seal.svg" }
+  { id: "today", glyph: "/ui/ornate/ornate-today.png" },
+  { id: "intake", glyph: "/ui/ornate/ornate-intake.png" },
+  { id: "roidboy", glyph: "/ui/ornate/ornate-roidboy.png" },
+  { id: "moments", glyph: "/ui/ornate/ornate-moments.png" },
+  { id: "ps", glyph: "/ui/ornate/ornate-ps.png" },
+  { id: "summation", glyph: "/ui/ornate/ornate-summation.png" },
+  { id: "yearreview", glyph: "/ui/ornate/ornate-yearreview.png" },
+  { id: "seal", glyph: "/ui/ornate/ornate-seal.png" }
 ];
 
 export default function Sidebar({ active, onSelect }) {
