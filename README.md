@@ -93,17 +93,17 @@ A clean slate removes:
 The goal is a single, predictable baseline you can **lock** and build forward## Glyph Directory (Current Wiring)
 
 Navigation glyphs (Sidebar):
-- today → /ui/glyphs/eye.svg
-- intake → /ui/glyphs/intake.svg
-- roidboy → /ui/glyphs/roidboy.svg
-- moments → /ui/glyphs/moments.svg
-- ps → /ui/glyphs/ps.svg
-- summation → /ui/glyphs/summation.svg
-- yearreview → /ui/glyphs/year.svg
-- seal → /ui/glyphs/seal.svg
+- today → /ui/ornate/ornate-today.png
+- intake → /ui/ornate/ornate-intake.png
+- roidboy → /ui/ornate/ornate-roidboy.png
+- moments → /ui/ornate/ornate-moments.png
+- ps → /ui/ornate/ornate-ps.png
+- summation → /ui/ornate/ornate-summation.png
+- yearreview → /ui/ornate/ornate-yearreview.png
+- seal → /ui/ornate/ornate-seal.png
 
 Topbar:
-- library button → /ui/glyphs/directory.svg
+- library button → /ui/ornate/ornate-directory.png
 
 Ornate section markers (Daily Hub):
 - Assessment → /ui/ornate/ornate-assessment.png
