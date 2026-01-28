@@ -344,3 +344,55 @@ textarea{
   color: rgba(216,168,184,.90);
   line-height: 1.25;
 }
+
+
+
+/* ===== ORNATE GLYPH SIZING OVERRIDES (LOCKED) ===== */
+:root{
+  --glyph-nav: 92px;
+  --glyph-nav-hit: 108px;
+  --glyph-img: 64px;
+  --glyph-img-sm: 54px;
+}
+
+.glyphNav{
+  width: var(--glyph-nav) !important;
+  height: var(--glyph-nav) !important;
+  border-radius: 22px !important;
+}
+
+.glyphBtn{
+  width: var(--glyph-nav-hit) !important;
+  height: var(--glyph-nav-hit) !important;
+  border-radius: 26px !important;
+}
+
+.glyphImg, .glyphNav img{
+  width: var(--glyph-img) !important;
+  height: var(--glyph-img) !important;
+  object-fit: contain !important;
+}
+
+.glyphImgSm{
+  width: var(--glyph-img-sm) !important;
+  height: var(--glyph-img-sm) !important;
+  object-fit: contain !important;
+}
+
+/* Date chip + global text must match TELL NO LIES pink */
+.datePill, .dateChip, .dateBadge{
+  color: var(--ink-pink, #f1a7b9) !important;
+  text-shadow: 0 0 22px rgba(241,167,185,0.32) !important;
+  border-color: rgba(241,167,185,0.22) !important;
+}
+
+/* Right edge swipe hotspot wider */
+.rightHotzone{
+  width: 64px !important;
+}
+
+
+.topbarRightRow{ display:flex; align-items:center; gap:12px; justify-content:flex-end; }
+.topbarRight{ display:flex; justify-content:flex-end; }
+
+label{ color: var(--ink-pink, #f1a7b9) !important; text-shadow: 0 0 14px rgba(241,167,185,0.22) !important; }
