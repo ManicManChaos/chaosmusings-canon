@@ -50,8 +50,10 @@ body::after{
   --nude:#d9c3b3;
   --nude-2:#cdb6a7;
   --pink:#d8a8b8;
-  --gold:#d6b36a;
-  --gold-2:#e2c78b;
+  --gold:#d1b06a;
+  --gold-2:#e0c892;
+  --labelKhaki:#c8bea2;
+  --labelGlow: 0 0 18px rgba(200,190,162,0.20), 0 0 10px rgba(200,190,162,0.12);
   --goldGlow: 0 0 18px rgba(214,179,106,0.28), 0 0 10px rgba(214,179,106,0.16);
   --pinkGlow: 0 0 16px rgba(216,168,184,0.22), 0 0 10px rgba(216,168,184,0.14);
 
@@ -175,8 +177,8 @@ body::before{
 
 /* ===== Buttons / glyphs ===== */
 .glyphImg{
-  width: 84px;
-  height: 84px;
+  width: 94px;
+  height: 94px;
   object-fit: contain;
   opacity: .96;
   display:block;
@@ -184,9 +186,13 @@ body::before{
 
 
 .glyphBtn{
-  width: 78px;
-  height: 78px;
-  border-radius: 18px;
+  width: 86px;
+  height: 86px;
+  border-radius: 14px;
+  padding: 0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   border: 1px solid rgba(216,168,184,.22);
   background: rgba(0,0,0,.14);
   color: rgba(216,168,184,.90);
@@ -307,9 +313,13 @@ textarea{
 }
 
 .glyphNav{
-  width: 96px;
-  height: 96px;
-  border-radius: 18px;
+  width: 98px;
+  height: 98px;
+  border-radius: 14px;
+  padding: 0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   border: 1px solid rgba(216,168,184,.22);
   background: rgba(0,0,0,.18);
   cursor:pointer;
@@ -442,8 +452,8 @@ label{ color: var(--ink-pink, #f1a7b9) !important; text-shadow: 0 0 14px rgba(24
    user-entered input text = PINK GLOW
 */
 label{
-  color: var(--gold) !important;
-  text-shadow: var(--goldGlow) !important;
+  color: var(--labelKhaki) !important;
+  text-shadow: var(--labelGlow) !important;
   letter-spacing: 0.22em;
   text-transform: uppercase;
 }
