@@ -1,535 +1,242 @@
-@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:wght@400;500&display=swap");
+/* =========================================================
+   MANIC MUSINGS — GLOBAL (LOCKED)
+   - Lace / earth overlay background across the entire app
+   - Tell No Lies header gets the same background treatment
+   - Labels = khaki/antique glow (NOT yellow)
+   - User input text = pink glow
+   - Glyph bigger + case tighter (sidebar)
+   ========================================================= */
 
-/* global.css — FULL REPLACEMENT (LOCKED) */
+:root{
+  /* Background image wired from public/ui/backgrounds */
+  --bg-img: url("/ui/backgrounds/lace-emerald-earth.png");
 
-*{ box-sizing:border-box; }
-html,body{
-  height:100%;
+  /* Base colors */
+  --base-greenblack: #050706;
+  --panel: rgba(10, 10, 10, 0.62);
+
+  /* TEXT SYSTEM (locked) */
+  --ink-pink: #f1a7b9;           /* user fill-in text */
+  --ink-pink-soft: rgba(241,167,185,0.82);
+
+  /* LABEL SYSTEM — khaki / antique parchment (NOT yellow) */
+  --label-khaki: #c7b88d;
+  --label-khaki-soft: rgba(199,184,141,0.80);
+
+  /* Glows */
+  --glow-pink-soft: 0 0 14px rgba(241,167,185,0.22);
+  --glow-pink-med:  0 0 22px rgba(241,167,185,0.32);
+  --glow-pink-strong: 0 0 32px rgba(241,167,185,0.46);
+
+  --glow-khaki-soft: 0 0 12px rgba(199,184,141,0.20);
+  --glow-khaki-med:  0 0 18px rgba(199,184,141,0.30);
+
+  /* Sidebar glyph sizing (BIGGER glyph, SMALLER case) */
+  --nav-case: 74px;   /* tighter bubble */
+  --nav-glyph: 62px;  /* bigger glyph */
+  --nav-radius: 18px;
+
+  /* Shared radii */
+  --radius-xl: 22px;
+  --radius-lg: 18px;
+  --radius-md: 14px;
+
+  /* Strokes */
+  --stroke-1: rgba(241,167,185,0.12);
+  --stroke-2: rgba(241,167,185,0.20);
 }
 
+*{ box-sizing: border-box; }
+html, body{ height: 100%; }
+
 body{
-  color: var(--pink);
-  background: var(--greenblack);
+  margin: 0;
+  color: var(--ink-pink);
+  font-family: "Tell No Lies", "Cinzel", "Cormorant Garamond", serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+
+  /* BASE + layered lace earth overlay */
+  background:
+    radial-gradient(1200px 900px at 45% 18%, rgba(241,167,185,0.07), transparent 60%),
+    radial-gradient(900px 700px at 70% 78%, rgba(199,184,141,0.05), transparent 62%),
+    var(--base-greenblack);
+
   position: relative;
   overflow-x: hidden;
 }
 
-/* Lace + earth-tone overlay (adds life without flattening UI) */
+/* FORCE background overlay across ALL screens (Daily Hub + every section) */
 body::before{
-  content:"";
+  content: "";
   position: fixed;
   inset: 0;
-  background-image: url("/ui/backgrounds/lace-emerald-earth.png");
+  z-index: -1;
+  pointer-events: none;
+
+  background-image: var(--bg-img);
   background-size: cover;
   background-position: center;
-  opacity: 0.58;
-  filter: saturate(1.05) contrast(1.06);
-  mix-blend-mode: overlay;
-  pointer-events: none;
-  z-index: -2;
+  background-repeat: no-repeat;
+
+  /* make it visible (NOT flat) */
+  opacity: 0.78;
+  filter: contrast(1.06) saturate(0.92) brightness(0.92);
+
+  /* slightly “alive” without being busy */
+  mix-blend-mode: soft-light;
 }
 
-/* Vignette / depth */
-body::after{
-  content:"";
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(900px 700px at 50% 35%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.35) 55%, rgba(0,0,0,0.62) 100%);
-  pointer-events: none;
-  z-index: -1;
-}
-
-
-:root{
-  /* Core */
-  --greenblack:#050a08;
-  --greenblack-2:#070c0a;
-  --ink:#030504;
-
-  /* Accents */
-  --nude:#d9c3b3;
-  --nude-2:#cdb6a7;
-  --pink:#d8a8b8;
-  --gold:#d1b06a;
-  --gold-2:#e0c892;
-  --labelKhaki:#c8bea2;
-  --labelGlow: 0 0 18px rgba(200,190,162,0.20), 0 0 10px rgba(200,190,162,0.12);
-  --goldGlow: 0 0 18px rgba(214,179,106,0.28), 0 0 10px rgba(214,179,106,0.16);
-  --pinkGlow: 0 0 16px rgba(216,168,184,0.22), 0 0 10px rgba(216,168,184,0.14);
-
-  /* Lines / surfaces */
-  --line: rgba(217,195,179,.14);
-  --line-soft: rgba(217,195,179,.09);
-  --wash: rgba(0,0,0,.18);
-  --panel: rgba(8,12,10,.52);
-  --panel-2: rgba(8,12,10,.42);
-
-  /* Radius */
-  --r1: 14px;
-  --r2: 22px;
-
-  /* Shadows */
-  --shadow: 0 14px 40px rgba(0,0,0,.45);
-
-  /* Fonts */
-  --serif: ui-serif, "Iowan Old Style", "Palatino Linotype", Palatino, "Times New Roman", Times, serif;
-  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-}
-
-body{
-  margin:0;
-  color: var(--pink);
-  text-shadow: 0 0 16px rgba(216,168,184,.18); /* PRIMARY TEXT = PINK */
-  background:
-    radial-gradient(1000px 650px at 18% 12%, rgba(176,141,43,.10), transparent 62%),
-    radial-gradient(900px 620px at 78% 28%, rgba(216,168,184,.08), transparent 64%),
-    radial-gradient(1100px 700px at 45% 88%, rgba(205,182,167,.07), transparent 66%),
-    linear-gradient(180deg, var(--ink) 0%, var(--greenblack) 55%, var(--ink) 100%);
-  overflow-x:hidden;
-}
-
-body::before{
-  content:"";
-  position:fixed;
-  inset:-60px;
-  pointer-events:none;
-  background:
-    radial-gradient(620px 380px at 28% 24%, rgba(216,168,184,.05), transparent 62%),
-    radial-gradient(520px 360px at 74% 46%, rgba(176,141,43,.05), transparent 64%),
-    conic-gradient(from 180deg at 50% 50%,
-      rgba(255,255,255,.02),
-      rgba(0,0,0,0),
-      rgba(255,255,255,.03),
-      rgba(0,0,0,0),
-      rgba(255,255,255,.02)
-    );
-  filter: blur(18px);
-  opacity:.45;
-  mix-blend-mode: screen;
-  animation: shimmer 10s ease-in-out infinite alternate;
-}
-
-@keyframes shimmer{
-  from{ transform: translate3d(-10px,-6px,0) scale(1.02); opacity:.38; }
-  to  { transform: translate3d( 12px, 8px,0) scale(1.03); opacity:.52; }
-}
-
-/* ===== App root ===== */
-.appRoot{ min-height:100vh; }
-.mainStage{ padding: 18px; max-width: 980px; margin: 0 auto; }
-
-/* ===== Topbar (TELL NO LIES glow) ===== */
-.topbar{
-  position:sticky;
-  top:0;
-  z-index: 50;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  padding:12px 14px;
-  border-bottom:1px solid var(--line-soft);
-  background: rgba(4,6,5,.62);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-}
-
-
-
-.topbarGrid{
-  display:grid;
-  grid-template-columns: 1fr auto;
-  align-items:center;
-}
-
-.topbarLeft{
-  display:flex;
-  align-items:center;
-  justify-content:flex-start;
-}
-
-.topbarCenter{ display:none; }
-
-
-.brandTitle{
-  font-family: var(--serif);
-  letter-spacing:.30em;
-  text-transform: uppercase;
-  font-weight: 600;
-  font-size: 22px;
-  color: var(--pink);
-  text-shadow: 0 0 28px rgba(216,168,184,.38), 0 0 14px rgba(216,168,184,.20);
-}
-
-.chip{
-  padding: 10px 14px;
-  border-radius: 999px;
-  border: 1px solid rgba(216,168,184,.22);
-  background: rgba(0,0,0,.16);
-  color: rgba(216,168,184,.92);
-  font-family: var(--serif);
-  letter-spacing:.14em;
-  text-transform: uppercase;
-  font-size: 12px;
-  box-shadow: 0 0 22px rgba(216,168,184,.16);
-}
-
-
-/* ===== Buttons / glyphs ===== */
-.glyphImg{
-  width: 94px;
-  height: 94px;
-  object-fit: contain;
-  opacity: .96;
-  display:block;
-}
-
-
-.glyphBtn{
-  width: 86px;
-  height: 86px;
-  border-radius: 14px;
-  padding: 0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border: 1px solid rgba(216,168,184,.22);
-  background: rgba(0,0,0,.14);
-  color: rgba(216,168,184,.90);
-  cursor:pointer;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
-}
-
-
-/* ===== Zones / cards ===== */
-.zone{
-  margin-top: 12px;
-  border-radius: var(--r2);
-  border: 1px solid rgba(217,195,179,.12);
-  background: rgba(0,0,0,.14);
-  overflow:hidden;
-}
-.zoneHead{
-  display:flex;
-  align-items:center;
-  justify-content:flex-end;
-  gap:12px;
-  padding: 14px 14px 10px;
-  border-bottom: 1px solid rgba(217,195,179,.08);
-}
-.view{ padding: 16px 16px 18px; }
-
-.grid2{
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-@media (max-width:820px){
-  .grid2{ grid-template-columns: 1fr; }
-}
-
-.field{
-  display:grid;
-  gap:6px;
-  margin-top: 10px;
-}
-label{
-  font-family: var(--sans);
-  letter-spacing:.28em;
-  text-transform: uppercase;
-  font-size: 11px;
-  color: rgba(216,168,184,.88);
-}
-
-input, select, textarea{
-  width:100%;
-  padding: 12px 14px;
-  border-radius: 18px;
-  border: 1px solid rgba(217,195,179,.12);
-  background: rgba(0,0,0,.14);
-  color: rgba(217,195,179,.90);
-  outline:none;
-  font-family: var(--sans);
-  font-size: 14px;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.03);
-}
-
-textarea{
-  resize: vertical;
-  min-height: 120px;
-}
-
-/* ===== Progress bar ===== */
-.bar{
-  height:10px;
-  border-radius:999px;
-  border:1px solid rgba(217,195,179,.12);
-  background: rgba(0,0,0,.12);
-  overflow:hidden;
-}
-
-/* ===== Sidebar (RIGHT SIDE) ===== */
-.rightHotzone{
-  position:fixed;
-  right:0;
-  bottom:0;
-  width: 64px;
-  height: 100%;
-  z-index: 95;
+/* app root/container should NOT wipe the body bg */
+.appRoot{
+  min-height: 100vh;
   background: transparent;
 }
 
-
-.navScrim{
-  position:fixed;
-  inset:0;
-  background: rgba(0,0,0,.55);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  z-index: 80;
+/* Panels */
+.panel{
+  background: var(--panel);
+  border: 1px solid var(--stroke-1);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 18px 60px rgba(0,0,0,0.55);
+  backdrop-filter: blur(10px);
 }
 
-.sidePlane{
-  position:fixed;
-  top:0;
-  right:0;
-  height:100%;
-  width: 240px;
-  transform: translateX(110%);
-  transition: transform .22s ease;
-  z-index: 90;
-  border-left: 1px solid rgba(217,195,179,.12);
-  background: rgba(4,6,5,.70);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-}
-.sidePlane.isOpen{ transform: translateX(0); }
-
-.sidePlaneInner{
-  padding: 14px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-
-.glyphNav{
-  width: 98px;
-  height: 98px;
-  border-radius: 14px;
-  padding: 0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border: 1px solid rgba(216,168,184,.22);
-  background: rgba(0,0,0,.18);
-  cursor:pointer;
-}
-
-
-.glyphNav.isActive{
-  border-color: rgba(216,168,184,.32);
-  box-shadow: 0 0 22px rgba(216,168,184,.10);
-}
-
-
-/* ===== App Info Book ===== */
-.kv{
-  display:grid;
-  gap:10px;
-}
-.kvRow{
-  display:grid;
-  grid-template-columns: 160px 1fr;
-  gap: 12px;
-  padding: 12px 12px;
-  border-radius: var(--r2);
-  border: 1px solid rgba(217,195,179,.10);
-  background: rgba(0,0,0,.12);
-}
-@media (max-width:820px){
-  .kvRow{ grid-template-columns: 1fr; }
-}
-.kvK{
-  font-family: var(--sans);
-  letter-spacing: .28em;
-  text-transform: uppercase;
-  font-size: 11px;
-  color: rgba(216,168,184,.88);
-}
-.kvV{
-  color: rgba(216,168,184,.92);
-  text-shadow: 0 0 18px rgba(216,168,184,.18);
-  line-height: 1.35;
-}
-
-.glyphGrid{
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-@media (max-width:820px){
-  .glyphGrid{ grid-template-columns: 1fr; }
-}
-.glyphCard{
-  display:flex;
-  align-items:center;
-  gap: 12px;
-  padding: 12px 12px;
-  border-radius: var(--r2);
-  border: 1px solid rgba(217,195,179,.10);
-  background: rgba(0,0,0,.12);
-}
-.glyphText{ display:grid; gap:4px; }
-.glyphName{
-  letter-spacing: .22em;
-  text-transform: uppercase;
-  font-size: 12px;
-  color: rgba(216,168,184,.96);
-  text-shadow: 0 0 22px rgba(216,168,184,.22);
-}
-.glyphMeaning{
-  font-size: 12px;
-  color: rgba(216,168,184,.90);
-  line-height: 1.25;
-}
-
-
-
-/* ===== ORNATE GLYPH SIZING OVERRIDES (LOCKED) ===== */
-:root{
-  --glyph-nav: 92px;
-  --glyph-nav-hit: 108px;
-  --glyph-img: 64px;
-  --glyph-img-sm: 54px;
-}
-
-.glyphNav{
-  width: var(--glyph-nav) !important;
-  height: var(--glyph-nav) !important;
-  border-radius: 22px !important;
-}
-
-.glyphBtn{
-  width: var(--glyph-nav-hit) !important;
-  height: var(--glyph-nav-hit) !important;
-  border-radius: 26px !important;
-}
-
-.glyphImg, .glyphNav img{
-  width: var(--glyph-img) !important;
-  height: var(--glyph-img) !important;
-  object-fit: contain !important;
-}
-
-.glyphImgSm{
-  width: var(--glyph-img-sm) !important;
-  height: var(--glyph-img-sm) !important;
-  object-fit: contain !important;
-}
-
-/* Date chip + global text must match TELL NO LIES pink */
-.datePill, .dateChip, .dateBadge{
-  color: var(--ink-pink, #f1a7b9) !important;
-  text-shadow: 0 0 22px rgba(241,167,185,0.32) !important;
-  border-color: rgba(241,167,185,0.22) !important;
-}
-
-/* Right edge swipe hotspot wider */
-.rightHotzone{
-  width: 64px !important;
-}
-
-
-.topbarRightRow{ display:flex; align-items:center; gap:12px; justify-content:flex-end; }
-.topbarRight{ display:flex; justify-content:flex-end; }
-
-label{ color: var(--ink-pink, #f1a7b9) !important; text-shadow: 0 0 14px rgba(241,167,185,0.22) !important; }
-
-.tnlTitle{ font-family:'Cinzel', serif; }
-
-/* ---- COLOR SYSTEM LOCK ----
-   label text = GOLD GLOW
-   user-entered input text = PINK GLOW
-*/
-label{
-  color: var(--labelKhaki) !important;
-  text-shadow: var(--labelGlow) !important;
+/* Labels (khaki glow) */
+.label,
+.smallLabel,
+.fieldLabel{
+  color: var(--label-khaki);
+  text-shadow: var(--glow-khaki-soft);
   letter-spacing: 0.22em;
   text-transform: uppercase;
 }
 
+/* Inputs (user fill-in = pink glow) */
 input, textarea, select{
-  color: var(--pink) !important;
-  text-shadow: var(--pinkGlow) !important;
+  color: var(--ink-pink);
+  text-shadow: var(--glow-pink-soft);
 }
 
-::placeholder{
-  color: rgba(216,168,184,0.55);
-  text-shadow: none;
+input::placeholder, textarea::placeholder{
+  color: rgba(241,167,185,0.55);
 }
 
-/* ===== FINAL OVERRIDES (JAN 28) =====
-   Fixes:
-   - Background overlay not showing (body::before was overwritten)
-   - Glyph too small + bubble too large
-   - Label gold reads "piss yellow" -> khaki parchment glow
-*/
-
-:root{
-  --labelKhaki:#b7b09a;
-  --labelGlow: 0 0 18px rgba(183,176,154,0.22), 0 0 10px rgba(183,176,154,0.14);
-
-  /* tighter bubble, bigger glyph */
-  --glyph-nav: 82px;
-  --glyph-nav-hit: 82px;
-  --glyph-img: 78px;
-  --glyph-img-sm: 66px;
+/* =========================================================
+   TELL NO LIES HEADER — background applied here too
+   ========================================================= */
+.tnlHeaderBar{
+  position: relative;
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(199,184,141,0.16);
+  overflow: hidden;
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(6px);
 }
 
-/* Background: force lace overlay */
-body{
-  background-color: var(--greenblack) !important;
-}
-body::before{
-  content:"" !important;
-  position: fixed !important;
-  inset: 0 !important;
-  background-image: url("/ui/backgrounds/lace-emerald-earth.png") !important;
-  background-size: cover !important;
-  background-position: center !important;
-  opacity: 0.62 !important;
-  filter: saturate(1.06) contrast(1.08) !important;
-  mix-blend-mode: overlay !important;
-  pointer-events: none !important;
-  z-index: -1 !important;
-  animation: none !important;
-  transform: none !important;
+.tnlHeaderBar::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: var(--bg-img);
+  background-size: cover;
+  background-position: center;
+  opacity: 0.70;
+  mix-blend-mode: soft-light;
+  filter: contrast(1.05) saturate(0.95) brightness(0.92);
 }
 
-/* Labels: khaki parchment glow */
-label{
-  color: var(--labelKhaki) !important;
-  text-shadow: var(--labelGlow) !important;
+.tnlHeaderInner{
+  position: relative;
+  z-index: 1;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
-/* Inputs: user-entered text = pink glow */
-input, select, textarea{
-  color: var(--pink) !important;
-  text-shadow: var(--pinkGlow) !important;
+.tnlTitle{
+  margin: 0;
+  text-align: left;
+  font-size: 28px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-pink);
+  text-shadow: var(--glow-pink-strong);
 }
 
-/* Sidebar glyph buttons: tighter frame + larger icon */
-.glyphNav{
-  width: var(--glyph-nav) !important;
-  height: var(--glyph-nav) !important;
-  border-radius: 18px !important;
-  padding: 0 !important;
-}
-.glyphImg, .glyphNav img{
-  width: var(--glyph-img) !important;
-  height: var(--glyph-img) !important;
-  object-fit: contain !important;
+/* date chip */
+.dateChip{
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(199,184,141,0.22);
+  background: rgba(0,0,0,0.28);
+  color: var(--label-khaki);
+  text-shadow: var(--glow-khaki-med);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-size: 12px;
 }
 
-/* Reduce spacing so it feels less "floating" */
-.sidePlaneInner{ gap: 8px !important; }
+/* =========================================================
+   SIDEBAR — bigger glyph, tighter case
+   ========================================================= */
+.sidebarHotspot{
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 64px; /* larger swipe hotspot */
+  height: 100vh;
+  z-index: 60;
+  background: transparent;
+  touch-action: pan-y;
+}
+
+.navGlyphBtn{
+  width: var(--nav-case);
+  height: var(--nav-case);
+  border-radius: var(--nav-radius);
+  border: 1px solid rgba(199,184,141,0.16);
+  background: rgba(0,0,0,0.26);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.navGlyphBtn:active{
+  border-color: rgba(199,184,141,0.30);
+  box-shadow: 0 0 18px rgba(199,184,141,0.18);
+}
+
+.navGlyphImg{
+  width: var(--nav-glyph);
+  height: var(--nav-glyph);
+  object-fit: contain;
+  display: block;
+  filter:
+    drop-shadow(0 0 10px rgba(199,184,141,0.20))
+    drop-shadow(0 0 10px rgba(241,167,185,0.10));
+}
+
+.navGlyphText{
+  font-size: 10px;
+  line-height: 1;
+  color: var(--label-khaki);
+  text-shadow: var(--glow-khaki-soft);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+/* Layout helper */
+.container{
+  width: min(1100px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 18px 0 34px 0;
+}
