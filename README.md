@@ -93,20 +93,20 @@ A clean slate removes:
 The goal is a single, predictable baseline you can **lock** and build forward## Glyph Directory (Current Wiring)
 
 Navigation glyphs (Sidebar):
-- today → /ui/ornate/ornate-today.png
-- intake → /ui/ornate/ornate-intake.png
-- roidboy → /ui/ornate/ornate-roidboy.png
-- moments → /ui/ornate/ornate-moments.png
-- ps → /ui/ornate/ornate-ps.png
-- summation → /ui/ornate/ornate-summation.png
-- yearreview → /ui/ornate/ornate-yearreview.png
-- seal → /ui/ornate/ornate-seal.png
+- today → /ui/ornate-priest/ornate-today.png
+- intake → /ui/ornate-priest/ornate-intake.png
+- roidboy → /ui/ornate-priest/ornate-roidboy.png
+- moments → /ui/ornate-priest/ornate-moments.png
+- ps → /ui/ornate-priest/ornate-ps.png
+- summation → /ui/ornate-priest/ornate-summation.png
+- yearreview → /ui/ornate-priest/ornate-yearreview.png
+- seal → /ui/ornate-priest/ornate-seal.png
 
 Topbar:
-- library button → /ui/ornate/ornate-directory.png
+- library button → /ui/ornate-priest/ornate-directory.png
 
 Ornate section markers (Daily Hub):
-- Assessment → /ui/ornate/ornate-assessment.png
-- Intake → /ui/ornate/ornate-intake.png
-- Context → /ui/ornate/ornate-context.png
-- Summation → /ui/ornate/ornate-summation.png
+- Assessment → /ui/ornate-priest/ornate-assessment.png
+- Intake → /ui/ornate-priest/ornate-intake.png
+- Context → /ui/ornate-priest/ornate-context.png
+- Summation → /ui/ornate-priest/ornate-summation.png
