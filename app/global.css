@@ -1,8 +1,44 @@
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:wght@400;500&display=swap");
+
 /* global.css — FULL REPLACEMENT (LOCKED) */
 
 *{ box-sizing:border-box; }
 html,body{
-  color: var(--pink); height:100%; }
+  height:100%;
+}
+
+body{
+  color: var(--pink);
+  background: var(--greenblack);
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Lace + earth-tone overlay (adds life without flattening UI) */
+body::before{
+  content:"";
+  position: fixed;
+  inset: 0;
+  background-image: url("/ui/backgrounds/lace-emerald-earth.png");
+  background-size: cover;
+  background-position: center;
+  opacity: 0.58;
+  filter: saturate(1.05) contrast(1.06);
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: -2;
+}
+
+/* Vignette / depth */
+body::after{
+  content:"";
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(900px 700px at 50% 35%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.35) 55%, rgba(0,0,0,0.62) 100%);
+  pointer-events: none;
+  z-index: -1;
+}
+
 
 :root{
   /* Core */
@@ -14,8 +50,10 @@ html,body{
   --nude:#d9c3b3;
   --nude-2:#cdb6a7;
   --pink:#d8a8b8;
-  --gold:#b08d2b;
-  --gold-2:#8f6f1e;
+  --gold:#d6b36a;
+  --gold-2:#e2c78b;
+  --goldGlow: 0 0 18px rgba(214,179,106,0.28), 0 0 10px rgba(214,179,106,0.16);
+  --pinkGlow: 0 0 16px rgba(216,168,184,0.22), 0 0 10px rgba(216,168,184,0.14);
 
   /* Lines / surfaces */
   --line: rgba(217,195,179,.14);
@@ -396,3 +434,26 @@ textarea{
 .topbarRight{ display:flex; justify-content:flex-end; }
 
 label{ color: var(--ink-pink, #f1a7b9) !important; text-shadow: 0 0 14px rgba(241,167,185,0.22) !important; }
+
+.tnlTitle{ font-family:'Cinzel', serif; }
+
+/* ---- COLOR SYSTEM LOCK ----
+   label text = GOLD GLOW
+   user-entered input text = PINK GLOW
+*/
+label{
+  color: var(--gold) !important;
+  text-shadow: var(--goldGlow) !important;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+input, textarea, select{
+  color: var(--pink) !important;
+  text-shadow: var(--pinkGlow) !important;
+}
+
+::placeholder{
+  color: rgba(216,168,184,0.55);
+  text-shadow: none;
+}
