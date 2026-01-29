@@ -1,54 +1,45 @@
-"use client";
+import React from "react";
 
-import AssessmentView from "@/components/AssessmentView";
+const GLYPH = (name) => `/ui/ornate-priest/glyph-${name}.png`;
 
-/**
- * DailyHubView — LOCKED
- * - NO helper text
- * - NO section titles
- * - NO in-section glyph clutter (navigation stays in sidebar + header)
- */
-
-export default function DailyHubView({ data, onPatch, onGo }) {
-  const d = data || {};
-  const assessment = d.assessment || {};
-
-  const intake = d.intake || {};
-  const goals = intake.goals || {};
-  const totals = intake.totals || {};
-
-  const pct = (v, g) => {
-    if (!g) return 0;
-    return Math.min(100, Math.round((Number(v || 0) / Number(g)) * 100));
-  };
-
+export default function DailyHubView({
+  dateLabel = "",
+  onOpenLibrary, // preserve: optional callback if you have it
+  children,
+}) {
   return (
-    <div className="dailyHub">
-      <div className="zone">
-        <div className="view">
-          <AssessmentView value={assessment} onChange={(next) => onPatch?.({ assessment: next })} />
-        </div>
-      </div>
+    <div className="appRoot">
+      <div className="container">
+        {/* TELL NO LIES header with background overlay */}
+        <div className="tnlHeaderBar">
+          <div className="tnlHeaderInner">
+            <h1 className="tnlTitle">TELL NO LIES</h1>
 
-      <div className="zone">
-        <div className="view">
-          <Bar label="CALORIES" v={totals.calories} g={goals.calories} p={pct(totals.calories, goals.calories)} />
-          <Bar label="PROTEIN" v={totals.proteinG} g={goals.proteinG} p={pct(totals.proteinG, goals.proteinG)} />
-          <Bar label="CARBS" v={totals.carbsG} g={goals.carbsG} p={pct(totals.carbsG, goals.carbsG)} />
-          <Bar label="FAT" v={totals.fatG} g={goals.fatG} p={pct(totals.fatG, goals.fatG)} />
-          <Bar label="WATER" v={totals.waterOz} g={goals.waterOz} p={pct(totals.waterOz, goals.waterOz)} />
-        </div>
-      </div>
-    </div>
-  );
-}
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <div className="dateChip">{dateLabel}</div>
 
-function Bar({ label, v, g, p }) {
-  return (
-    <div style={{ marginBottom: 12 }}>
-      <label>{label}</label>
-      <div className="bar">
-        <div style={{ width: `${p}%`, height: "100%", background: "rgba(214,179,106,.35)" }} />
+              {/* Library next to date (NOT under it) */}
+              <button
+                className="navGlyphBtn"
+                onClick={() => onOpenLibrary && onOpenLibrary()}
+                aria-label="Library"
+                title="Library"
+                style={{
+                  width: 74,
+                  height: 74,
+                  padding: 6,
+                }}
+              >
+                <img className="navGlyphImg" src={GLYPH("library")} alt="Library" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Main content */}
+        <div className="panel" style={{ padding: 18, marginTop: 14 }}>
+          {children}
+        </div>
       </div>
     </div>
   );
