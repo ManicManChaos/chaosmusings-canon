@@ -467,3 +467,69 @@ input, textarea, select{
   color: rgba(216,168,184,0.55);
   text-shadow: none;
 }
+
+/* ===== FINAL OVERRIDES (JAN 28) =====
+   Fixes:
+   - Background overlay not showing (body::before was overwritten)
+   - Glyph too small + bubble too large
+   - Label gold reads "piss yellow" -> khaki parchment glow
+*/
+
+:root{
+  --labelKhaki:#b7b09a;
+  --labelGlow: 0 0 18px rgba(183,176,154,0.22), 0 0 10px rgba(183,176,154,0.14);
+
+  /* tighter bubble, bigger glyph */
+  --glyph-nav: 82px;
+  --glyph-nav-hit: 82px;
+  --glyph-img: 78px;
+  --glyph-img-sm: 66px;
+}
+
+/* Background: force lace overlay */
+body{
+  background-color: var(--greenblack) !important;
+}
+body::before{
+  content:"" !important;
+  position: fixed !important;
+  inset: 0 !important;
+  background-image: url("/ui/backgrounds/lace-emerald-earth.png") !important;
+  background-size: cover !important;
+  background-position: center !important;
+  opacity: 0.62 !important;
+  filter: saturate(1.06) contrast(1.08) !important;
+  mix-blend-mode: overlay !important;
+  pointer-events: none !important;
+  z-index: -1 !important;
+  animation: none !important;
+  transform: none !important;
+}
+
+/* Labels: khaki parchment glow */
+label{
+  color: var(--labelKhaki) !important;
+  text-shadow: var(--labelGlow) !important;
+}
+
+/* Inputs: user-entered text = pink glow */
+input, select, textarea{
+  color: var(--pink) !important;
+  text-shadow: var(--pinkGlow) !important;
+}
+
+/* Sidebar glyph buttons: tighter frame + larger icon */
+.glyphNav{
+  width: var(--glyph-nav) !important;
+  height: var(--glyph-nav) !important;
+  border-radius: 18px !important;
+  padding: 0 !important;
+}
+.glyphImg, .glyphNav img{
+  width: var(--glyph-img) !important;
+  height: var(--glyph-img) !important;
+  object-fit: contain !important;
+}
+
+/* Reduce spacing so it feels less "floating" */
+.sidePlaneInner{ gap: 8px !important; }
