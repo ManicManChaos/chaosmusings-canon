@@ -1,89 +1,100 @@
-"use client";
+import React, { useMemo, useRef } from "react";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+const GLYPH = (name) => `/ui/ornate-priest/glyph-${name}.png`;
 
-/**
- * LOCKED
- * - Right-edge swipe ONLY
- * - Glyph paths: /public/ui/ornate-priest/*.png
- * - No left hotspot
- */
+export default function Sidebar({
+  isOpen,
+  setIsOpen,
+  activeKey,
+  onNavigate, // preserve: parent handles routing/state
+}) {
+  const startX = useRef(null);
 
-const NAV = [
-  { id: "today", glyph: "/ui/ornate-priest/glyph-today.png" },
-  { id: "intake", glyph: "/ui/ornate-priest/glyph-intake.png" },
-  { id: "roidboy", glyph: "/ui/ornate-priest/glyph-roidboy.png" },
-  { id: "moments", glyph: "/ui/ornate-priest/glyph-moments.png" },
-  { id: "ps", glyph: "/ui/ornate-priest/glyph-context.png" },
-  { id: "summation", glyph: "/ui/ornate-priest/glyph-summation.png" },
-  { id: "yearreview", glyph: "/ui/ornate-priest/glyph-yearreview.png" },
-  { id: "seal", glyph: "/ui/ornate-priest/glyph-seal.png" }
-];
+  const items = useMemo(() => ([
+    { key: "today", label: "Today", src: GLYPH("today") },
+    { key: "intake", label: "Intake", src: GLYPH("intake") },
+    { key: "roidboy", label: "RoidBoy", src: GLYPH("roidboy") },
+    { key: "moments", label: "Moments", src: GLYPH("moments") },
+    { key: "context", label: "Context", src: GLYPH("context") },
+    { key: "summation", label: "Summation", src: GLYPH("summation") },
+    { key: "yearreview", label: "Year Review", src: GLYPH("yearreview") },
+    { key: "settings", label: "Settings", src: GLYPH("settings") },
+  ]), []);
 
-export default function Sidebar({ active, onSelect }) {
-  const [open, setOpen] = useState(false);
-  const start = useRef({ x: 0, y: 0, tracking: false });
+  function onHotspotPointerDown(e){ startX.current = e.clientX; }
+  function onHotspotPointerUp(e){
+    const sx = startX.current;
+    startX.current = null;
+    if (sx == null) return;
 
-  useEffect(() => {
-    const hot = document.getElementById("rightHotzone");
-    if (!hot) return;
-
-    const onStart = (e) => {
-      const t = e.touches[0];
-      start.current = { x: t.clientX, y: t.clientY, tracking: true };
-    };
-
-    const onMove = (e) => {
-      if (!start.current.tracking) return;
-      const t = e.touches[0];
-      const dx = start.current.x - t.clientX;
-      const dy = Math.abs(t.clientY - start.current.y);
-      if (dy > 30) return;
-      if (dx > 22) setOpen(true);
-    };
-
-    const onEnd = () => {
-      start.current.tracking = false;
-    };
-
-    hot.addEventListener("touchstart", onStart, { passive: true });
-    hot.addEventListener("touchmove", onMove, { passive: true });
-    hot.addEventListener("touchend", onEnd, { passive: true });
-
-    return () => {
-      hot.removeEventListener("touchstart", onStart);
-      hot.removeEventListener("touchmove", onMove);
-      hot.removeEventListener("touchend", onEnd);
-    };
-  }, []);
-
-  const items = useMemo(() => NAV, []);
+    const dx = sx - e.clientX; // swipe left
+    if (!isOpen && dx > 14) setIsOpen(true);
+    if (!isOpen && dx <= 14) setIsOpen(true); // forgiving open
+  }
 
   return (
     <>
-      {/* RIGHT EDGE HOTZONE */}
-      <div id="rightHotzone" className="rightHotzone" />
+      {!isOpen && (
+        <div
+          className="sidebarHotspot"
+          onPointerDown={onHotspotPointerDown}
+          onPointerUp={onHotspotPointerUp}
+          aria-hidden="true"
+        />
+      )}
 
-      {open && <div className="navScrim" onClick={() => setOpen(false)} />}
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          right: 0,
+          height: "100vh",
+          width: 104,
+          transform: isOpen ? "translateX(0)" : "translateX(112%)",
+          transition: "transform 220ms ease",
+          zIndex: 70,
+          padding: 14,
+          display: "flex",
+          flexDirection: "column",
+          gap: 12,
+          background: "rgba(6,6,6,0.62)",
+          borderLeft: "1px solid rgba(199,184,141,0.16)",
+          backdropFilter: "blur(10px)",
+        }}
+      >
+        {/* Seal = close */}
+        <button
+          className="navGlyphBtn"
+          onClick={() => setIsOpen(false)}
+          aria-label="Close sidebar"
+          title="Close"
+        >
+          <img className="navGlyphImg" src={GLYPH("seal")} alt="Seal" />
+        </button>
 
-      <aside className={`sidePlane ${open ? "isOpen" : ""}`} aria-hidden={!open}>
-        <div className="sidePlaneInner">
-          {items.map((it) => (
+        {items.map((it) => {
+          const isActive = activeKey === it.key;
+          return (
             <button
-              key={it.id}
-              type="button"
-              className={`glyphNav ${active === it.id ? "isActive" : ""}`}
+              key={it.key}
+              className="navGlyphBtn"
               onClick={() => {
-                setOpen(false);
-                onSelect?.(it.id);
+                setIsOpen(false);
+                if (onNavigate) onNavigate(it.key);
               }}
-              aria-label={it.id}
+              aria-label={it.label}
+              title={it.label}
+              style={{
+                borderColor: isActive ? "rgba(199,184,141,0.34)" : undefined,
+                boxShadow: isActive ? "0 0 18px rgba(199,184,141,0.14)" : undefined,
+              }}
             >
-              <img className="glyphImg" src={it.glyph} alt="" draggable={false} />
+              <img className="navGlyphImg" src={it.src} alt={it.label} />
+              <div className="navGlyphText">{it.label}</div>
             </button>
-          ))}
-        </div>
-      </aside>
+          );
+        })}
+      </div>
     </>
   );
 }
