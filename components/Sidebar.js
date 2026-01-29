@@ -5,19 +5,19 @@ import { useEffect, useMemo, useRef, useState } from "react";
 /**
  * LOCKED
  * - Right-edge swipe ONLY
- * - Glyph paths: /public/ui/ornate/*.png
+ * - Glyph paths: /public/ui/ornate-priest/*.png
  * - No left hotspot
  */
 
 const NAV = [
-  { id: "today", glyph: "/ui/ornate/ornate-today.png" },
-  { id: "intake", glyph: "/ui/ornate/ornate-intake.png" },
-  { id: "roidboy", glyph: "/ui/ornate/ornate-roidboy.png" },
-  { id: "moments", glyph: "/ui/ornate/ornate-moments.png" },
-  { id: "ps", glyph: "/ui/ornate/ornate-ps.png" },
-  { id: "summation", glyph: "/ui/ornate/ornate-summation.png" },
-  { id: "yearreview", glyph: "/ui/ornate/ornate-yearreview.png" },
-  { id: "seal", glyph: "/ui/ornate/ornate-seal.png" }
+  { id: "today", glyph: "/ui/ornate-priest/glyph-today.png" },
+  { id: "intake", glyph: "/ui/ornate-priest/glyph-intake.png" },
+  { id: "roidboy", glyph: "/ui/ornate-priest/glyph-roidboy.png" },
+  { id: "moments", glyph: "/ui/ornate-priest/glyph-moments.png" },
+  { id: "ps", glyph: "/ui/ornate-priest/glyph-context.png" },
+  { id: "summation", glyph: "/ui/ornate-priest/glyph-summation.png" },
+  { id: "yearreview", glyph: "/ui/ornate-priest/glyph-yearreview.png" },
+  { id: "seal", glyph: "/ui/ornate-priest/glyph-seal.png" }
 ];
 
 export default function Sidebar({ active, onSelect }) {

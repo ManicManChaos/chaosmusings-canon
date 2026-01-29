@@ -4,25 +4,25 @@ import { useEffect, useMemo, useState } from "react";
 import { getEraForMonth, getMonthKey, listDays } from "@/lib/mmocStore";
 
 const GLYPH_DIR = [
-  { id: "today", label: "TODAY", meaning: "Daily Hub / Tell No Lies", src: "/ui/ornate/ornate-today.png" },
-  { id: "intake", label: "INTAKE", meaning: "Body + inputs", src: "/ui/ornate/ornate-intake.png" },
-  { id: "roidboy", label: "ROIDBOY", meaning: "Cycle / protocol tracking", src: "/ui/ornate/ornate-roidboy.png" },
-  { id: "moments", label: "MOMENTS", meaning: "Captures + highlights", src: "/ui/ornate/ornate-moments.png" },
-  { id: "ps", label: "PS", meaning: "Post-script / notes", src: "/ui/ornate/ornate-ps.png" },
-  { id: "summation", label: "SUMMATION", meaning: "Wrap / totals", src: "/ui/ornate/ornate-summation.png" },
-  { id: "yearreview", label: "YEAR REVIEW", meaning: "Long-view synthesis", src: "/ui/ornate/ornate-yearreview.png" },
-  { id: "directory", label: "DIRECTORY", meaning: "Sections / navigation map", src: "/ui/ornate/ornate-directory.png" },
-  { id: "settings", label: "SETTINGS", meaning: "App systems + preferences", src: "/ui/ornate/ornate-settings.png" },
-  { id: "seal", label: "SEAL", meaning: "Ritual stamp / confirm", src: "/ui/ornate/ornate-seal.png" },
-  { id: "context", label: "CONTEXT", meaning: "Reference / background layer", src: "/ui/ornate/ornate-context.png" },
-  { id: "assessment", label: "ASSESSMENT", meaning: "Score / check-in", src: "/ui/ornate/ornate-assessment.png" },
+  { id: "today", label: "TODAY", meaning: "Daily Hub / Tell No Lies", src: "/ui/ornate-priest/glyph-today.png" },
+  { id: "intake", label: "INTAKE", meaning: "Body + inputs", src: "/ui/ornate-priest/glyph-intake.png" },
+  { id: "roidboy", label: "ROIDBOY", meaning: "Cycle / protocol tracking", src: "/ui/ornate-priest/glyph-roidboy.png" },
+  { id: "moments", label: "MOMENTS", meaning: "Captures + highlights", src: "/ui/ornate-priest/glyph-moments.png" },
+  { id: "ps", label: "PS", meaning: "Post-script / notes", src: "/ui/ornate-priest/glyph-context.png" },
+  { id: "summation", label: "SUMMATION", meaning: "Wrap / totals", src: "/ui/ornate-priest/glyph-summation.png" },
+  { id: "yearreview", label: "YEAR REVIEW", meaning: "Long-view synthesis", src: "/ui/ornate-priest/glyph-yearreview.png" },
+  { id: "directory", label: "DIRECTORY", meaning: "Sections / navigation map", src: "/ui/ornate-priest/glyph-directory.png" },
+  { id: "settings", label: "SETTINGS", meaning: "App systems + preferences", src: "/ui/ornate-priest/glyph-settings.png" },
+  { id: "seal", label: "SEAL", meaning: "Ritual stamp / confirm", src: "/ui/ornate-priest/glyph-seal.png" },
+  { id: "context", label: "CONTEXT", meaning: "Reference / background layer", src: "/ui/ornate-priest/glyph-context.png" },
+  { id: "assessment", label: "ASSESSMENT", meaning: "Score / check-in", src: "/ui/ornate-priest/glyph-assessment.png" },
 ];
 
 const SYSTEMS_MAP = [
   { k: "LOCAL STORE", v: "mmocStore (device cache + day index)" },
   { k: "CLOUD", v: "Supabase (auth + persistence)" },
   { k: "ROUTING", v: "Single app shell; view switch by id (no URL fan-out)" },
-  { k: "GLYPHS", v: "Ornate gold PNGs only: /public/ui/ornate/*.png" },
+  { k: "GLYPHS", v: "Ornate gold PNGs only: /public/ui/ornate-priest/*.png" },
 ];
 
 const APP_MAP = [
